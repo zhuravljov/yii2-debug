@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Основной компонент для подключения отладочной панели
+ *
  * @property string $tag
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
@@ -10,7 +12,7 @@
 class Yii2Debug extends CApplicationComponent
 {
 	/**
-	 * @var array
+	 * @var array список ip и масок, которым разрешен доступ к панели
 	 */
 	public $allowedIPs = array('127.0.0.1', '::1');
 	/**
@@ -18,11 +20,11 @@ class Yii2Debug extends CApplicationComponent
 	 */
 	public $panels = array();
 	/**
-	 * @var string
+	 * @var string путь для записи логов. По умолчанию /runtime/debug
 	 */
 	public $logPath;
 	/**
-	 * @var int
+	 * @var int максимальное кол-во логов
 	 */
 	public $historySize = 50;
 	/**
@@ -30,29 +32,34 @@ class Yii2Debug extends CApplicationComponent
 	 */
 	public $enabled = true;
 	/**
-	 * @var string
+	 * @var string id модуля для просмотра отладочной информации
 	 */
 	public $moduleId = 'debug';
 	/**
-	 * @var bool
+	 * @var bool подсветка кода на страницах с отладочной информацией
 	 */
 	public $highlightCode = true;
 
 	private $_tag;
 
+	/**
+	 * Генерируется уникальная метка страницы, подключается модуль просмотра,
+	 * устанавливается обработчик для сбора отладочной информации, регистрируются
+	 * скрипты для вывода дебаг-панели
+	 */
 	public function init()
 	{
 		parent::init();
 		if (!$this->enabled) return;
 
 		if ($this->logPath === null) {
-			$this->logPath = Yii::app()->getRuntimePath() . DIRECTORY_SEPARATOR . 'debug';
+			$this->logPath = Yii::app()->getRuntimePath() . '/debug';
 		}
 
-		Yii::setPathOfAlias('debug', __DIR__);
-		Yii::import('debug.Yii2DebugModule');
-		Yii::import('debug.Yii2DebugPanel');
-		Yii::import('debug.panels.*');
+		Yii::setPathOfAlias('yii2-debug', __DIR__);
+		Yii::import('yii2-debug.Yii2DebugModule');
+		Yii::import('yii2-debug.Yii2DebugPanel');
+		Yii::import('yii2-debug.panels.*');
 
 		foreach (array_merge($this->corePanels(), $this->panels) as $id => $config) {
 			$config['id'] = $id;
@@ -73,12 +80,18 @@ class Yii2Debug extends CApplicationComponent
 		$this->initToolbar();
 	}
 
+	/**
+	 * @return string метка текущей страницы
+	 */
 	public function getTag()
 	{
 		if ($this->_tag === null) $this->_tag = uniqid();
 		return $this->_tag;
 	}
 
+	/**
+	 * @return array страницы по умолчанию
+	 */
 	public function corePanels()
 	{
 		return array(
@@ -100,6 +113,9 @@ class Yii2Debug extends CApplicationComponent
 		);
 	}
 
+	/**
+	 * Регистрация скриптов для загрузки дебаг-панели
+	 */
 	public function initToolbar()
 	{
 		if (!$this->checkAccess()) return;
@@ -146,6 +162,9 @@ JS
 		$this->processDebug();
 	}
 
+	/**
+	 * Запись отладочной информации
+	 */
 	protected function processDebug()
 	{
 		$path = $this->logPath;
@@ -153,7 +172,9 @@ JS
 
 		$indexFile = "$path/index.json";
 		$manifest = array();
-		if (is_file($indexFile)) $manifest = json_decode(file_get_contents($indexFile), true);
+		if (is_file($indexFile)) {
+			$manifest = json_decode(file_get_contents($indexFile), true);
+		}
 		$request = Yii::app()->getRequest();
 		$manifest[$this->getTag()] = $summary = array(
 			'tag' => $this->getTag(),
@@ -175,11 +196,12 @@ JS
 
 		file_put_contents($dataFile, json_encode($data));
 		file_put_contents($indexFile, json_encode($manifest));
-
-		$data['panels'] = $this->panels;
-		//$this->renderInternal(__DIR__ . '/views/default/_panel.php', $data);
 	}
 
+	/**
+	 * Удаление ранее сохраненных логов когда общее их кол-во больше historySize
+	 * @param $manifest
+	 */
 	protected function resizeHistory(&$manifest)
 	{
 		if (count($manifest) > $this->historySize + 10) {
@@ -194,13 +216,19 @@ JS
 	}
 
 	/**
+	 * Проверка доступа
 	 * @return bool
 	 */
 	public function checkAccess()
 	{
 		$ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 		foreach ($this->allowedIPs as $filter) {
-			if ($filter === '*' || $filter === $ip || (($pos = strpos($filter, '*')) !== false && !strncmp($ip, $filter, $pos))) {
+			if (
+				$filter === '*' || $filter === $ip || (
+					($pos = strpos($filter, '*')) !== false &&
+					!strncmp($ip, $filter, $pos)
+				)
+			) {
 				return true;
 			}
 		}

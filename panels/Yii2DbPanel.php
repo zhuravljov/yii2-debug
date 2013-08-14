@@ -50,7 +50,7 @@ HTML;
 	}
 
 	/**
-	 * @return string
+	 * @return string html-контент закладки со списком sql-запросов
 	 */
 	protected function getQueriesDetail()
 	{
@@ -84,7 +84,8 @@ HTML;
 	}
 
 	/**
-	 * @return string
+	 * @return string html-контент закладки с детальной информацией активных
+	 * подключений к базам данных
 	 */
 	protected function getConnectionsDetail()
 	{
@@ -105,6 +106,7 @@ HTML;
 	private $_timings;
 
 	/**
+	 * Группировка времени выполнения sql-запросов
 	 * @return array
 	 */
 	protected function calculateTimings()
@@ -138,6 +140,7 @@ HTML;
 	}
 
 	/**
+	 * Выделение sql-запроса из лога и подстановка параметров
 	 * @param string $message
 	 * @return string
 	 */
@@ -146,8 +149,6 @@ HTML;
 		$sqlStart = strpos($message, '(') + 1;
 		$sqlEnd = strrpos($message , ')');
 		$sql = substr($message, $sqlStart, $sqlEnd - $sqlStart);
-		//return CHtml::encode($sql);
-
 		if (strpos($sql, '. Bound with ') !== false) {
 			list($query, $params) = explode('. Bound with ', $sql);
 			$sql = strtr($query, $this->parseParamsSql($params));
@@ -156,8 +157,9 @@ HTML;
 	}
 
 	/**
+	 * Парсинг строки с параметрами
 	 * @param string $params
-	 * @return array
+	 * @return array key/value
 	 */
 	private function parseParamsSql($params)
 	{
@@ -195,6 +197,7 @@ HTML;
 	private $_hl;
 
 	/**
+	 * Подсветка sql-кода
 	 * @param string $sql
 	 * @return string
 	 */

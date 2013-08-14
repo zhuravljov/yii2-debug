@@ -18,6 +18,7 @@ class Yii2DebugModule extends CWebModule
 			parent::beforeControllerAction($controller, $action) &&
 			$this->component->checkAccess()
 		) {
+			// Отключение дебагера на страницах просмотра ранее сохраненных логов
 			Yii::app()->detachEventHandler('onEndRequest', array($this->component, 'onEndRequest'));
 			Yii::app()->getClientScript()->reset();
 			return true;

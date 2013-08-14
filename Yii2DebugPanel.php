@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Yii2DebugPanel is a base class for debugger panel. It defines how data should be collected,
- * what should be dispalyed at debug toolbar and on debugger details view.
+ * Yii2DebugPanel - базовый класс для страниц с отладочной информацией.
+ * Он определяет как информация будет сохраняться и выводиться на просмотр.
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  * @package Yii2Debug
@@ -11,11 +11,11 @@
 class Yii2DebugPanel extends CComponent
 {
 	/**
-	 * @var string
+	 * @var string id страницы
 	 */
 	public $id;
 	/**
-	 * @var string
+	 * @var string метка для просмотра информации
 	 */
 	public $tag;
 	/**
@@ -23,16 +23,16 @@ class Yii2DebugPanel extends CComponent
 	 */
 	public $component;
 	/**
-	 * @var array
+	 * @var array массив отладочных данных
 	 */
 	public $data;
 	/**
-	 * @var bool
+	 * @var bool|null подчветка кода. По умолчанию Yii2Debug::$highlightCode
 	 */
 	public $highlightCode;
 
 	/**
-	 * @return string name of the panel
+	 * @return string название панели для вывода в меню
 	 */
 	public function getName()
 	{
@@ -40,7 +40,7 @@ class Yii2DebugPanel extends CComponent
 	}
 
 	/**
-	 * @return string content that is displayed at debug toolbar
+	 * @return string html-контент для вывода в дебаг-панель
 	 */
 	public function getSummary()
 	{
@@ -48,7 +48,7 @@ class Yii2DebugPanel extends CComponent
 	}
 
 	/**
-	 * @return string content that is displayed in debugger detail view
+	 * @return string html-контент для вывода на страницу
 	 */
 	public function getDetail()
 	{
@@ -56,10 +56,8 @@ class Yii2DebugPanel extends CComponent
 	}
 
 	/**
-	 * Saves data to be later used in debugger detail view.
-	 * This method is called on every page where debugger is enabled.
-	 *
-	 * @return mixed data to be saved
+	 * Базовый метод для сбора отладочной информации
+	 * @return mixed
 	 */
 	public function save()
 	{
@@ -72,7 +70,7 @@ class Yii2DebugPanel extends CComponent
 	}
 
 	/**
-	 * @return string URL pointing to panel detail view
+	 * @return string URL страницы
 	 */
 	public function getUrl()
 	{
@@ -83,6 +81,7 @@ class Yii2DebugPanel extends CComponent
 	}
 
 	/**
+	 * Рендер блока с массивом key-value
 	 * @param string $caption
 	 * @param array $values
 	 * @return string
@@ -125,6 +124,7 @@ HTML;
 	private $_hl;
 
 	/**
+	 * Подсветка php-кода
 	 * @param string $code
 	 * @return string
 	 */
@@ -142,6 +142,7 @@ HTML;
 	}
 
 	/**
+	 * Рендер панели с закладками
 	 * @param array $items
 	 * @return string
 	 */

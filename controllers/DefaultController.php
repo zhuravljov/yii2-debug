@@ -18,13 +18,21 @@ class DefaultController extends CController
 		return $this->getModule()->component;
 	}
 
+	/**
+	 * Общий список логов
+	 */
 	public function actionIndex()
 	{
-		return $this->render('index', array(
+		$this->render('index', array(
 			'manifest' => $this->getManifest(),
 		));
 	}
 
+	/**
+	 * Страница для просмотра отладочной информации
+	 * @param null $tag сохраненного лога
+	 * @param null $panel id страницы
+	 */
 	public function actionView($tag = null, $panel = null)
 	{
 		if ($tag === null) {
@@ -37,7 +45,7 @@ class DefaultController extends CController
 		} else {
 			$activePanel = $this->getComponent()->panels['request'];
 		}
-		return $this->render('view', array(
+		$this->render('view', array(
 			'tag' => $tag,
 			'summary' => $this->summary,
 			'manifest' => $this->getManifest(),
@@ -46,10 +54,14 @@ class DefaultController extends CController
 		));
 	}
 
+	/**
+	 * Генерирует код дебаг-панели по ajax-запросу
+	 * @param $tag
+	 */
 	public function actionToolbar($tag)
 	{
 		$this->loadData($tag);
-		return $this->renderPartial('toolbar', array(
+		$this->renderPartial('toolbar', array(
 			'tag' => $tag,
 			'panels' => $this->getComponent()->panels,
 		));
