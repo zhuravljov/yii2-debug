@@ -105,9 +105,10 @@ HTML;
 		$action = null;
 		$actionParams = array();
 		if (($ca = Yii::app()->createController($route)) !== null) {
-			list($controller, $actionID) = $ca;
 			/* @var CController $controller */
 			/* @var string $actionID */
+			list($controller, $actionID) = $ca;
+			if (!$actionID) $actionID = $controller->defaultAction;
 			if (($a = $controller->createAction($actionID)) !== null) {
 				if ($a instanceof CInlineAction) {
 					$action = get_class($controller) . '::action' . ucfirst($actionID) . '()';
