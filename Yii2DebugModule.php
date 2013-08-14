@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @author Roman Zhuravlev <zhuravljov@gmail.com>
+ * @package Yii2Debug
+ * @since 1.1.13
+ */
+class Yii2DebugModule extends CWebModule
+{
+	/**
+	 * @var Yii2Debug
+	 */
+	public $component;
+
+	public function beforeControllerAction($controller, $action)
+	{
+		if (
+			parent::beforeControllerAction($controller, $action) &&
+			$this->component->checkAccess()
+		) {
+			Yii::app()->detachEventHandler('onEndRequest', array($this->component, 'onEndRequest'));
+			Yii::app()->getClientScript()->reset();
+			return true;
+		}
+		else
+			return false;
+	}
+}
