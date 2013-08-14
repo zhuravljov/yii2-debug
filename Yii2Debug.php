@@ -1,5 +1,8 @@
 <?php
 
+Yii::setPathOfAlias('yii2-debug', __DIR__);
+Yii::import('yii2-debug.Yii2DebugPanel');
+
 /**
  * Основной компонент для подключения отладочной панели
  *
@@ -56,11 +59,6 @@ class Yii2Debug extends CApplicationComponent
 			$this->logPath = Yii::app()->getRuntimePath() . '/debug';
 		}
 
-		Yii::setPathOfAlias('yii2-debug', __DIR__);
-		Yii::import('yii2-debug.Yii2DebugModule');
-		Yii::import('yii2-debug.Yii2DebugPanel');
-		Yii::import('yii2-debug.panels.*');
-
 		foreach (array_merge($this->corePanels(), $this->panels) as $id => $config) {
 			$config['id'] = $id;
 			$config['tag'] = $this->getTag();
@@ -71,7 +69,7 @@ class Yii2Debug extends CApplicationComponent
 
 		Yii::app()->setModules(array_merge(Yii::app()->getModules(), array(
 			$this->moduleId => array(
-				'class' => 'Yii2DebugModule',
+				'class' => 'yii2-debug.Yii2DebugModule',
 				'component' => $this,
 			),
 		)));
@@ -96,19 +94,19 @@ class Yii2Debug extends CApplicationComponent
 	{
 		return array(
 			'config' => array(
-				'class' => 'Yii2ConfigPanel',
+				'class' => 'yii2-debug.panels.Yii2ConfigPanel',
 			),
 			'request' => array(
-				'class' => 'Yii2RequestPanel',
+				'class' => 'yii2-debug.panels.Yii2RequestPanel',
 			),
 			'log' => array(
-				'class' => 'Yii2LogPanel',
+				'class' => 'yii2-debug.panels.Yii2LogPanel',
 			),
 			'profiling' => array(
-				'class' => 'Yii2ProfilingPanel',
+				'class' => 'yii2-debug.panels.Yii2ProfilingPanel',
 			),
 			'db' => array(
-				'class' => 'Yii2DbPanel',
+				'class' => 'yii2-debug.panels.Yii2DbPanel',
 			),
 		);
 	}
