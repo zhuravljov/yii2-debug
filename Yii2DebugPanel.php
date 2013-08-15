@@ -100,7 +100,7 @@ class Yii2DebugPanel extends CComponent
 			} else {
 				$value = CHtml::encode(var_export($value, true));
 			}
-			$rows .= '<tr><th style="width:300px;overflow:auto;">'
+			$rows .= '<tr><th style="width:300px;word-break:break-all;">'
 				. CHtml::encode($name)
 				. '</th><td><div style="overflow:auto">'
 				. $value
