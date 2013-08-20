@@ -139,8 +139,9 @@ HTML;
 		);
 	}
 
+	private $_statusCode;
+
 	/**
-	 * PHP >= 5.4
 	 * @return int|null
 	 */
 	protected function getStatusCode()
@@ -148,7 +149,26 @@ HTML;
 		if (function_exists('http_response_code')) {
 			return http_response_code();
 		} else {
-			return null;
+			return $this->_statusCode;
+		}
+	}
+
+	public function __construct()
+	{
+		if (!function_exists('http_response_code')) {
+			Yii::app()->attachEventHandler('onException', array($this, 'onException'));
+		}
+	}
+
+	/**
+	 * @param CExceptionEvent $event
+	 */
+	protected function onException($event)
+	{
+		if ($event->exception instanceof CHttpException) {
+			$this->_statusCode = $event->exception->statusCode;
+		} else {
+			$this->_statusCode = 500;
 		}
 	}
 }
