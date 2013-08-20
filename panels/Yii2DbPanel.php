@@ -18,7 +18,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 		$queryCount = count($timings);
 		$queryTime = 0;
 		foreach ($timings as $timing) {
-			$queryTime += $timing[3];
+			$queryTime += $timing[4];
 		}
 		$queryTime = number_format($queryTime * 1000) . ' ms';
 		$url = $this->getUrl();
@@ -58,21 +58,24 @@ HTML;
 		$rows = array();
 		$num = 0;
 		foreach ($timings as $timing) {
-			$duration = sprintf('%.1f ms', $timing[3] * 1000);
+			$time = $timing[3];
+			$time = date('H:i:s.', $time) . sprintf('%03d', (int)(($time - (int)$time) * 1000));
+			$duration = sprintf('%.1f ms', $timing[4] * 1000);
 			$procedure = $this->formatSql($timing[1]);
 			if ($this->highlightCode) {
 				$procedure = $this->highlightSql($procedure);
 			} else {
 				$procedure = CHtml::encode($procedure);
 			}
-			$rows[] = "<tr><td style=\"width: 80px;\">$duration</td><td>$procedure</td>";
+			$rows[] = "<tr><td style=\"width: 100px;\">$time</td><td style=\"width: 80px;\">$duration</td><td>$procedure</td>";
 		}
 		$rows = implode("\n", $rows);
 		return <<<HTML
 <table class="table table-condensed table-bordered table-striped table-hover" style="table-layout: fixed;">
 <thead>
 <tr>
-	<th style="width: 80px;">Time</th>
+	<th style="width: 100px;">Time</th>
+	<th style="width: 80px;">Duration</th>
 	<th>Query</th>
 </tr>
 </thead>
@@ -126,14 +129,14 @@ HTML;
 			} elseif (strpos($token, 'end:') === 0) {
 				$log[0] = $token = substr($token, 4);
 				if (($last = array_pop($stack)) !== null && $last[0] === $token) {
-					$timings[$last[4]] = array(count($stack), $token, $category, $timestamp - $last[3]);
+					$timings[$last[4]] = array(count($stack), $token, $category, $last[3], $timestamp - $last[3]);
 				}
 			}
 		}
 		$now = microtime(true);
 		while (($last = array_pop($stack)) !== null) {
 			$delta = $now - $last[3];
-			$timings[$last[4]] = array(count($stack), $last[0], $last[2], $delta);
+			$timings[$last[4]] = array(count($stack), $last[0], $last[2], $last[3], $delta);
 		}
 		ksort($timings);
 		return $this->_timings = $timings;
