@@ -50,7 +50,7 @@ class Yii2Debug extends CApplicationComponent
 	public function init()
 	{
 		parent::init();
-		if (!$this->enabled) return;
+		if (!$this->enabled || Yii::app() instanceof CConsoleApplication) return;
 
 		Yii::setPathOfAlias('yii2-debug', dirname(__FILE__));
 		Yii::app()->setImport(array(
