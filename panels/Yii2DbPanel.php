@@ -7,6 +7,11 @@
  */
 class Yii2DbPanel extends Yii2DebugPanel
 {
+	/**
+	 * @var bool вставлять или нет значения параметров в sql-запрос
+	 */
+	public $insertParamValues = true;
+
 	public function getName()
 	{
 		return 'Database';
@@ -241,6 +246,7 @@ HTML;
 		$sql = substr($message, $sqlStart, $sqlEnd - $sqlStart);
 		if (strpos($sql, '. Bound with ') !== false) {
 			list($query, $params) = explode('. Bound with ', $sql);
+			if (!$this->insertParamValues) return $query;
 			$sql = strtr($query, $this->parseParamsSql($params));
 		}
 		return $sql;
