@@ -139,6 +139,6 @@ ul.trace {
 }
 
 .sql-hl-main, .php-hl-main {
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 14px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+	font-size: 14px !important;
 }
