@@ -8,7 +8,7 @@ $assetUrl = CHtml::asset(Yii::getPathOfAlias('debug.assets'));
 /* @var CClientScript $cs */
 $cs = Yii::app()->getClientScript();
 $cs->registerCoreScript('jquery');
-$cs->registerScriptFile($assetUrl . '/js/bootstrap.js');
+$cs->registerScriptFile($assetUrl . '/js/bootstrap.js', CClientScript::POS_END);
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo Yii::app()->language; ?>" lang="<?php echo Yii::app()->language; ?>">
