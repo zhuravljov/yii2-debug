@@ -35,12 +35,17 @@ HTML;
 	public function getDetail()
 	{
 		$queriesCount = count($this->calculateTimings());
+		$summaryCount = count($this->calculateSummary());
 		$connectionsCount = count($this->data['connections']);
 		return $this->renderTabs(array(
 			array(
 				'label' => "Queries ($queriesCount)",
 				'content' => $this->getQueriesDetail(),
 				'active' => true,
+			),
+			array(
+				'label' => "Summary ($summaryCount)",
+				'content' => $this->getSummaryDetail(),
 			),
 			array(
 				'label' => "Connections ($connectionsCount)",
@@ -54,10 +59,8 @@ HTML;
 	 */
 	protected function getQueriesDetail()
 	{
-		$timings = $this->calculateTimings();
 		$rows = array();
-		$num = 0;
-		foreach ($timings as $timing) {
+		foreach ($this->calculateTimings() as $timing) {
 			$time = $timing[3];
 			$time = date('H:i:s.', $time) . sprintf('%03d', (int)(($time - (int)$time) * 1000));
 			$duration = sprintf('%.1f ms', $timing[4] * 1000);
@@ -77,6 +80,58 @@ HTML;
 	<th style="width: 100px;">Time</th>
 	<th style="width: 80px;">Duration</th>
 	<th>Query</th>
+</tr>
+</thead>
+<tbody>
+$rows
+</tbody>
+</table>
+HTML;
+	}
+
+	/**
+	 * @return string html-контент закладки с группировкой sql-запросов
+	 */
+	protected function getSummaryDetail()
+	{
+		$rows = array();
+		$num = 0;
+		foreach ($this->calculateSummary() as $item) {
+			$num++;
+			list($query, $count, $total, $min, $max) = $item;
+			if ($this->highlightCode) {
+				$query = $this->highlightSql($query);
+			} else {
+				$query = CHtml::encode($query);
+			}
+			$avg = sprintf('%.1f ms', $total * 1000 / $count);
+			$total = sprintf('%.1f ms', $total * 1000);
+			$min = sprintf('%.1f ms', $min * 1000);
+			$max = sprintf('%.1f ms', $max * 1000);
+			$rows[] = <<<HTML
+<tr>
+	<td style="width:30px;">$num</td>
+	<td>$query</td>
+	<td style="width:50px;">$count</td>
+	<td style="width:70px;">$total</td>
+	<td style="width:70px;">$avg</td>
+	<td style="width:70px;">$min</td>
+	<td style="width:70px;">$max</td>
+</tr>
+HTML;
+		}
+		$rows = implode("\n", $rows);
+		return <<<HTML
+<table class="table table-condensed table-bordered table-striped table-hover" style="table-layout: fixed;">
+<thead>
+<tr>
+	<th style="width:30px;">#</th>
+	<th>Query</th>
+	<th style="width:50px;">Count</th>
+	<th style="width:70px;">Total</th>
+	<th style="width:70px;">Avg</th>
+	<th style="width:70px;">Min</th>
+	<th style="width:70px;">Max</th>
 </tr>
 </thead>
 <tbody>
@@ -140,6 +195,38 @@ HTML;
 		}
 		ksort($timings);
 		return $this->_timings = $timings;
+	}
+
+	private $_summary;
+
+	/**
+	 * Группировка sql-запросов
+	 * @return array
+	 */
+	protected function calculateSummary()
+	{
+		if ($this->_summary !== null) {
+			return $this->_summary;
+		}
+		$summary = array();
+		foreach ($this->calculateTimings() as $timing) {
+			$duration = $timing[4];
+			$query = $this->formatSql($timing[1]);
+			$key = md5($query);
+			if (!isset($summary[$key])) {
+				$summary[$key] = array($query, 1, $duration, $duration, $duration);
+			} else {
+				$summary[$key][1]++;
+				$summary[$key][2] += $duration;
+				if ($summary[$key][3] > $duration) $summary[$key][3] = $duration;
+				if ($summary[$key][4] < $duration) $summary[$key][4] = $duration;
+			}
+		}
+		usort($summary, function($a, $b){
+			if ($a[2] == $b[2]) return 0;
+			return $a[2] < $b[2] ? 1 : -1;
+		});
+		return $this->_summary = $summary;
 	}
 
 	/**
