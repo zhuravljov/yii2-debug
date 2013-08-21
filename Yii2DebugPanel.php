@@ -169,8 +169,6 @@ HTML;
 			);
 		}
 
-		Yii::app()->getClientScript()->registerScript(__CLASS__.'#'.$id, "jQuery('$id').tab();");
-
 		return <<<HTML
 <ul id="tabs{$counter}" class="nav nav-tabs">$tabs</ul>
 <div class="tab-content">$details</div>
