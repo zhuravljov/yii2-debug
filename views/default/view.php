@@ -53,7 +53,7 @@ $this->pageTitle = 'Yii Debugger';
 									. ', ' . $meta['ip'];
 								$url = array('view', 'tag' => $meta['tag'], 'panel' => $activePanel->id);
 								if ($meta['tag'] == $tag) {
-									echo '<li class="active">';
+									echo '<li class="disabled">';
 								} else {
 									echo '<li>';
 								}
