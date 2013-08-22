@@ -20,7 +20,7 @@ $this->pageTitle = 'Yii Debugger';
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<h1>Available Debug Data</h1>
-			<table class="table table-condensed table-bordered table-striped table-hover" style="table-layout: fixed;">
+			<table class="table table-condensed table-bordered table-striped table-hover table-filtered" style="table-layout: fixed;">
 				<thead>
 				<tr>
 					<th style="width: 120px;">Tag</th>
@@ -37,7 +37,7 @@ $this->pageTitle = 'Yii Debugger';
 						<td><?php echo date('Y-m-d h:i:s', $data['time']); ?></td>
 						<td><?php echo $data['ip']; ?></td>
 						<td><?php echo $data['method']; ?></td>
-						<td><?php echo $data['url']; ?></td>
+						<td style="word-break:break-all;"><?php echo $data['url']; ?></td>
 					</tr>
 				<?php endforeach; ?>
 				</tbody>

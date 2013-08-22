@@ -79,7 +79,7 @@ HTML;
 		}
 		$rows = implode("\n", $rows);
 		return <<<HTML
-<table class="table table-condensed table-bordered table-striped table-hover" style="table-layout: fixed;">
+<table class="table table-condensed table-bordered table-striped table-hover table-filtered" style="table-layout: fixed;">
 <thead>
 <tr>
 	<th style="width: 100px;">Time</th>
@@ -127,7 +127,7 @@ HTML;
 		}
 		$rows = implode("\n", $rows);
 		return <<<HTML
-<table class="table table-condensed table-bordered table-striped table-hover" style="table-layout: fixed;">
+<table class="table table-condensed table-bordered table-striped table-hover table-filtered" style="table-layout: fixed;">
 <thead>
 <tr>
 	<th style="width:30px;">#</th>

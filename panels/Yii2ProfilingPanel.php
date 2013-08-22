@@ -68,7 +68,7 @@ HTML;
 		return <<<HTML
 <p>Total processing time: <b>$time</b>; Peak memory: <b>$memory</b>.</p>
 
-<table class="table table-condensed table-bordered table-striped table-hover" style="table-layout: fixed;">
+<table class="table table-condensed table-bordered table-striped table-hover table-filtered" style="table-layout: fixed;">
 <thead>
 <tr>
 	<th style="width: 80px;">Time</th>

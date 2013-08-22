@@ -9,6 +9,7 @@ Yii::app()->getClientScript()
 		'baseUrl' => CHtml::asset(Yii::getPathOfAlias('yii2-debug.assets')),
 		'js' => array(
 			YII_DEBUG ? 'js/bootstrap.js' : 'js/bootstrap.min.js',
+            'js/filter.js',
 		),
 		'css' => array(
 			YII_DEBUG ? 'css/bootstrap.css' : 'css/bootstrap.min.css',
