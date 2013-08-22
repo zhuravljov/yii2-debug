@@ -40,7 +40,7 @@ HTML;
 	public function getDetail()
 	{
 		$queriesCount = count($this->calculateTimings());
-		$summaryCount = count($this->calculateSummary());
+		$resumeCount = count($this->calculateResume());
 		$connectionsCount = count($this->data['connections']);
 		return $this->renderTabs(array(
 			array(
@@ -49,8 +49,8 @@ HTML;
 				'active' => true,
 			),
 			array(
-				'label' => "Summary ($summaryCount)",
-				'content' => $this->getSummaryDetail(),
+				'label' => "Resume ($resumeCount)",
+				'content' => $this->getResumeDetail(),
 			),
 			array(
 				'label' => "Connections ($connectionsCount)",
@@ -97,11 +97,11 @@ HTML;
 	/**
 	 * @return string html-контент закладки с группировкой sql-запросов
 	 */
-	protected function getSummaryDetail()
+	protected function getResumeDetail()
 	{
 		$rows = array();
 		$num = 0;
-		foreach ($this->calculateSummary() as $item) {
+		foreach ($this->calculateResume() as $item) {
 			$num++;
 			list($query, $count, $total, $min, $max) = $item;
 			if ($this->highlightCode) {
@@ -202,36 +202,39 @@ HTML;
 		return $this->_timings = $timings;
 	}
 
-	private $_summary;
+	private $_resume;
 
 	/**
 	 * Группировка sql-запросов
 	 * @return array
 	 */
-	protected function calculateSummary()
+	protected function calculateResume()
 	{
-		if ($this->_summary !== null) {
-			return $this->_summary;
+		if ($this->_resume !== null) {
+			return $this->_resume;
 		}
-		$summary = array();
+		$resume = array();
 		foreach ($this->calculateTimings() as $timing) {
 			$duration = $timing[4];
 			$query = $this->formatSql($timing[1]);
 			$key = md5($query);
-			if (!isset($summary[$key])) {
-				$summary[$key] = array($query, 1, $duration, $duration, $duration);
+			if (!isset($resume[$key])) {
+				$resume[$key] = array($query, 1, $duration, $duration, $duration);
 			} else {
-				$summary[$key][1]++;
-				$summary[$key][2] += $duration;
-				if ($summary[$key][3] > $duration) $summary[$key][3] = $duration;
-				if ($summary[$key][4] < $duration) $summary[$key][4] = $duration;
+				$resume[$key][1]++;
+				$resume[$key][2] += $duration;
+				if ($resume[$key][3] > $duration) $resume[$key][3] = $duration;
+				if ($resume[$key][4] < $duration) $resume[$key][4] = $duration;
 			}
 		}
-		usort($summary, function($a, $b){
-			if ($a[2] == $b[2]) return 0;
-			return $a[2] < $b[2] ? 1 : -1;
-		});
-		return $this->_summary = $summary;
+		usort($resume, array($this, 'compareResume'));
+		return $this->_resume = $resume;
+	}
+
+	private function compareResume($a, $b)
+	{
+		if ($a[2] == $b[2]) return 0;
+		return $a[2] < $b[2] ? 1 : -1;
 	}
 
 	/**
