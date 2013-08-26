@@ -48,16 +48,29 @@ HTML;
 		foreach ($this->data['messages'] as $log) {
 			list ($message, $level, $category, $time) = $log;
 			$time = date('H:i:s.', $time) . sprintf('%03d', (int)(($time - (int)$time) * 1000));
-			if (($lines = explode("\n", $message)) !== false) {
-				$message = CHtml::encode(array_shift($lines));
-				$traces = '';
-				foreach ($lines as $line) {
-					$traces .= '<li>' . CHtml::encode($line) . '</li>';
-				}
-				if ($traces !== '') {
-					$message .= '<ul class="trace">' . $traces . '</ul>';
+
+			$traces = array();
+			if (($lines = explode("\nStack trace:\n", $message, 2)) !== false) {
+				$message = $lines[0];
+				if (isset($lines[1])) {
+					$traces = array_merge(
+						array('Stack trace:'),
+						explode("\n", $lines[1])
+					);
+				} elseif (($lines = explode("\nin ", $message)) !== false) {
+					$message = array_shift($lines);
+					$traces = $lines;
 				}
 			}
+			$message = nl2br(CHtml::encode($message));
+			if (count($traces)) {
+				$message .= '<ul class="trace">';
+				foreach ($traces as $trace) {
+					$message .= '<li>' . CHtml::encode($trace) . '</li>';
+				}
+				$message .= '</ul>';
+			}
+
 			if ($level == CLogger::LEVEL_ERROR) {
 				$class = ' class="error"';
 			} elseif ($level == CLogger::LEVEL_WARNING) {

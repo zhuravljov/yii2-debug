@@ -129,6 +129,10 @@ ul.trace {
 	list-style: none;
 }
 
+tr.error ul.trace {
+	color: #555;
+}
+
 .callout-danger {
 	background-color: #fcf2f2;
 	border-color: #dFb5b4;
