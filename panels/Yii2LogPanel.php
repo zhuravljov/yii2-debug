@@ -48,15 +48,16 @@ HTML;
 		foreach ($this->data['messages'] as $log) {
 			list ($message, $level, $category, $time) = $log;
 			$time = date('H:i:s.', $time) . sprintf('%03d', (int)(($time - (int)$time) * 1000));
-			$message = nl2br(CHtml::encode($message));
-			/*if (!empty($traces)) {
-				$message .= Html::ul($traces, array(
-					'class' => 'trace',
-					'item' => function ($trace) {
-						return "<li>{$trace['file']}({$trace['line']})</li>";
-					},
-				));
-			}*/
+			if (($lines = explode("\n", $message)) !== false) {
+				$message = CHtml::encode(array_shift($lines));
+				$traces = '';
+				foreach ($lines as $line) {
+					$traces .= '<li>' . CHtml::encode($line) . '</li>';
+				}
+				if ($traces !== '') {
+					$message .= '<ul class="trace">' . $traces . '</ul>';
+				}
+			}
 			if ($level == CLogger::LEVEL_ERROR) {
 				$class = ' class="error"';
 			} elseif ($level == CLogger::LEVEL_WARNING) {
