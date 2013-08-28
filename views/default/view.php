@@ -37,7 +37,7 @@ $this->pageTitle = 'Yii Debugger';
 				</ul>
 			</div><!--/span-->
 			<div class="span10">
-				<div class="meta alert alert-info">
+				<div class="callout alert alert-info">
 					<div class="btn-group">
 						<?php echo CHtml::link('All', array('index'), array('class' => 'btn')); ?>
 						<button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -68,7 +68,7 @@ $this->pageTitle = 'Yii Debugger';
 					</div>
 					<?php echo $summary['tag']; ?>:
 					<?php echo $summary['method']; ?>
-					<?php echo CHtml::link(CHtml::encode($summary['url']), $summary['url'], array('class' => 'label')); ?>
+					<?php echo CHtml::link(CHtml::encode($summary['url']), $summary['url']); ?>
 					<?php echo $summary['ajax'] ? ' (AJAX)' : ''; ?>
 					at <?php echo date('Y-m-d h:i:s', $summary['time']); ?>
 					by <?php echo $summary['ip']; ?>
