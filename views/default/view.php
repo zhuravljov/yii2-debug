@@ -52,15 +52,17 @@ $this->pageTitle = 'Yii Debugger';
 									. ', ' . date('Y-m-d h:i:s', $meta['time'])
 									. ', ' . $meta['ip'];
 								$url = array('view', 'tag' => $meta['tag'], 'panel' => $activePanel->id);
-								if ($meta['tag'] == $tag) {
-									echo '<li class="disabled">';
-								} else {
-									echo '<li>';
+								if ($meta['tag'] == $tag && $count > 0) {
+									echo '<li class="divider"></li>';
 								}
+								echo '<li>';
 								echo CHtml::link(CHtml::encode($label), $url);
 								echo '</li>';
 								if (++$count >= 10) {
 									break;
+								}
+								if ($meta['tag'] == $tag) {
+									echo '<li class="divider"></li>';
 								}
 							}
 							?>
