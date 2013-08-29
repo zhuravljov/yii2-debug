@@ -156,11 +156,13 @@ HTML;
 		foreach ($this->data['connections'] as $id => $connection) {
 			$caption = "Component: $id ($connection[class])";
 			unset($connection['class']);
-			foreach (explode('  ', $connection['info']) as $line) {
-				list($key, $value) = explode(': ', $line, 2);
-				$connection[$key] = $value;
+			if (isset($connection['info'])) {
+				foreach (explode('  ', $connection['info']) as $line) {
+					list($key, $value) = explode(': ', $line, 2);
+					$connection[$key] = $value;
+				}
+				unset($connection['info']);
 			}
-			unset($connection['info']);
 			$content .= $this->renderDetail($caption, $connection);
 		}
 		return $content;
@@ -181,7 +183,7 @@ HTML;
 		$timings = array();
 		$stack = array();
 		foreach ($messages as $i => $log) {
-			list($token, $level, $category, $timestamp) = $log;
+			list($token, , $category, $timestamp) = $log;
 			$log[4] = $i;
 			if (strpos($token, 'begin:') === 0) {
 				$log[0] = $token = substr($token, 6);
@@ -324,9 +326,11 @@ HTML;
 				$connections[$id] = array(
 					'class' => get_class($component),
 					'driver' => $component->getDriverName(),
-					'server' => $component->getServerVersion(),
-					'info' => $component->getServerInfo(),
 				);
+				try {
+					$connections[$id]['server'] = $component->getServerVersion();
+					$connections[$id]['info'] = $component->getServerInfo();
+				} catch (Exception $e) {}
 			}
 		}
 
