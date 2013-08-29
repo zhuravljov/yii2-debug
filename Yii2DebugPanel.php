@@ -27,7 +27,7 @@ class Yii2DebugPanel extends CComponent
 	 */
 	public $data;
 	/**
-	 * @var bool|null подчветка кода. По умолчанию Yii2Debug::$highlightCode
+	 * @var bool|null подсветка кода. По умолчанию Yii2Debug::$highlightCode
 	 */
 	public $highlightCode;
 
