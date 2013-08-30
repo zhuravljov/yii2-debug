@@ -180,9 +180,9 @@ JS
 		$manifest[$this->getTag()] = $summary = array(
 			'tag' => $this->getTag(),
 			'url' => $request->getHostInfo() . $request->getUrl(),
-			'ajax' => $request->isAjaxRequest,
-			'method' => isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET',
-			'ip' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1',
+			'ajax' => $request->getIsAjaxRequest(),
+			'method' => $request->getRequestType(),
+			'ip' => $request->getUserHostAddress(),
 			'time' => time(),
 		);
 		$this->resizeHistory($manifest);
@@ -222,7 +222,7 @@ JS
 	 */
 	public function checkAccess()
 	{
-		$ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
+		$ip = Yii::app()->getRequest()->getUserHostAddress();
 		foreach ($this->allowedIPs as $filter) {
 			if (
 				$filter === '*' || $filter === $ip || (
