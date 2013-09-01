@@ -62,13 +62,15 @@ class Yii2Debug extends CApplicationComponent
 			$this->logPath = Yii::app()->getRuntimePath() . '/debug';
 		}
 
-		foreach (array_merge($this->corePanels(), $this->panels) as $id => $config) {
+		$panels = array();
+		foreach (CMap::mergeArray($this->corePanels(), $this->panels) as $id => $config) {
 			$config['id'] = $id;
 			$config['tag'] = $this->getTag();
 			$config['component'] = $this;
 			if (!isset($config['highlightCode'])) $config['highlightCode'] = $this->highlightCode;
-			$this->panels[$id] = Yii::createComponent($config);
+			$panels[$id] = Yii::createComponent($config);
 		}
+		$this->panels = $panels;
 
 		Yii::app()->setModules(array_merge(Yii::app()->getModules(), array(
 			$this->moduleId => array(
@@ -191,6 +193,12 @@ JS
 		$data = array();
 		foreach ($this->panels as $panel) {
 			$data[$panel->id] = $panel->save();
+			if (isset($panel->filterData)) {
+				$data[$panel->id] = $panel->evaluateExpression(
+					$panel->filterData,
+					array('data' => $data[$panel->id])
+				);
+			}
 			$panel->load($data[$panel->id]);
 		}
 		$data['summary'] = $summary;

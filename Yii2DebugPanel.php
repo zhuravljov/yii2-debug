@@ -30,6 +30,10 @@ class Yii2DebugPanel extends CComponent
 	 * @var bool|null подсветка кода. По умолчанию Yii2Debug::$highlightCode
 	 */
 	public $highlightCode;
+	/**
+	 * @var callback функция для обработки данных панели перед сохранением
+	 */
+	public $filterData;
 
 	/**
 	 * @return string название панели для вывода в меню
