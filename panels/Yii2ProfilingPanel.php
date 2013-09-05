@@ -14,18 +14,10 @@ class Yii2ProfilingPanel extends Yii2DebugPanel
 
 	public function getSummary()
 	{
-		$memory = sprintf('%.1f MB', $this->data['memory'] / 1048576);
-		$time = number_format($this->data['time'] * 1000) . ' ms';
-		$url = $this->getUrl();
-
-		return <<<HTML
-<div class="yii2-debug-toolbar-block">
-	<a href="$url" title="Total request processing time was $time">Time <span class="label">$time</span></a>
-</div>
-<div class="yii2-debug-toolbar-block">
-	<a href="$url" title="Peak memory consumption">Memory <span class="label">$memory</span></a>
-</div>
-HTML;
+		return $this->render(dirname(__FILE__) . '/../views/panels/profiling_bar.php', array(
+			'time' => number_format($this->data['time'] * 1000) . ' ms',
+			'memory' => sprintf('%.1f MB', $this->data['memory'] / 1048576),
+		));
 	}
 
 	public function getDetail()
@@ -34,7 +26,7 @@ HTML;
 		$timings = array();
 		$stack = array();
 		foreach ($messages as $i => $log) {
-			list($token, $level, $category, $timestamp) = $log;
+			list($token, , $category, $timestamp) = $log;
 			$log[4] = $i;
 			if (strpos($token, 'begin:') === 0) {
 				$log[0] = $token = substr($token, 6);
@@ -52,35 +44,20 @@ HTML;
 			$timings[$last[4]] = array(count($stack), $last[0], $last[2], $delta);
 		}
 		ksort($timings);
-
-		$rows = array();
+		$items = array();
 		foreach ($timings as $timing) {
-			$time = sprintf('%.1f ms', $timing[3] * 1000);
-			$procedure = str_repeat('<span class="indent">→</span>', $timing[0]) . CHtml::encode($timing[1]);
-			$category = CHtml::encode($timing[2]);
-			$rows[] = "<tr><td style=\"width: 80px;\">$time</td><td style=\"width: 220px;\">$category</td><td>$procedure</td>";
+			$items[] = array(
+				'indent' => $timing[0],
+				'procedure' => $timing[1],
+				'category' => $timing[2],
+				'time' => sprintf('%.1f ms', $timing[3] * 1000),
+			);
 		}
-		$rows = implode("\n", $rows);
-
-		$memory = sprintf('%.1f MB', $this->data['memory'] / 1048576);
-		$time = number_format($this->data['time'] * 1000) . ' ms';
-
-		return <<<HTML
-<p>Total processing time: <b>$time</b>; Peak memory: <b>$memory</b>.</p>
-
-<table class="table table-condensed table-bordered table-striped table-hover table-filtered" style="table-layout: fixed;">
-<thead>
-<tr>
-	<th style="width: 80px;">Time</th>
-	<th style="width: 220px;">Category</th>
-	<th>Procedure</th>
-</tr>
-</thead>
-<tbody>
-$rows
-</tbody>
-</table>
-HTML;
+		return $this->render(dirname(__FILE__) . '/../views/panels/profiling.php', array(
+			'items' => $items,
+			'time' => number_format($this->data['time'] * 1000) . ' ms',
+			'memory' => sprintf('%.1f MB', $this->data['memory'] / 1048576),
+		));
 	}
 
 	public function save()
