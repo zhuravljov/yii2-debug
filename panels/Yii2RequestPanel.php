@@ -14,63 +14,12 @@ class Yii2RequestPanel extends Yii2DebugPanel
 
 	public function getSummary()
 	{
-		$url = $this->getUrl();
-
-		$status = '';
-		if ($statusCode = $this->data['statusCode']) {
-			if ($statusCode >= 200 && $statusCode < 300) {
-				$class = 'label-success';
-			} elseif ($statusCode >= 100 && $statusCode < 200) {
-				$class = 'label-info';
-			} else {
-				$class = 'label-important';
-			}
-			$status .= <<<HTML
-<div class="yii2-debug-toolbar-block">
-	<a href="$url" title="Status code: $statusCode">Status <span class="label $class">$statusCode</span></a>
-</div>
-HTML;
-		}
-
-		return $status . <<<HTML
-<div class="yii2-debug-toolbar-block">
-	<a href="$url">Action <span class="label">{$this->data['action']}</span></a>
-</div>
-HTML;
+		return $this->render(dirname(__FILE__) . '/../views/panels/request_bar.php');
 	}
 
 	public function getDetail()
 	{
-		$data = array(
-			'Route' => $this->data['route'],
-			'Action' => $this->data['action'],
-			'Parameters' => $this->data['actionParams'],
-		);
-		return $this->renderTabs(array(
-			array(
-				'label' => 'Parameters',
-				'content' => $this->renderDetail('Routing', $data)
-					. $this->renderDetail('$_GET', $this->data['GET'])
-					. $this->renderDetail('$_POST', $this->data['POST'])
-					. $this->renderDetail('$_FILES', $this->data['FILES'])
-					. $this->renderDetail('$_COOKIE', $this->data['COOKIE']),
-				'active' => true,
-			),
-			array(
-				'label' => 'Headers',
-				'content' => $this->renderDetail('Request Headers', $this->data['requestHeaders'])
-					. $this->renderDetail('Response Headers', $this->data['responseHeaders']),
-			),
-			array(
-				'label' => 'Session',
-				'content' => $this->renderDetail('$_SESSION', $this->data['SESSION'])
-					. $this->renderDetail('Flashes', $this->data['flashes']),
-			),
-			array(
-				'label' => '$_SERVER',
-				'content' => $this->renderDetail('$_SERVER', $this->data['SERVER']),
-			),
-		));
+		return $this->render(dirname(__FILE__) . '/../views/panels/request.php');
 	}
 
 	public function save()
