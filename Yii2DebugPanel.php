@@ -79,8 +79,8 @@ class Yii2DebugPanel extends CComponent
 	public function getUrl()
 	{
 		return Yii::app()->createUrl($this->component->moduleId .  '/default/view', array(
-			'panel' => $this->id,
 			'tag' => $this->tag,
+			'panel' => $this->id,
 		));
 	}
 
@@ -90,7 +90,7 @@ class Yii2DebugPanel extends CComponent
 	 * @param array $_data_ data to be extracted and made available to the view file
 	 * @return string the rendering result
 	 */
-	protected function render($_viewFile_, $_data_ = null)
+	public function render($_viewFile_, $_data_ = null)
 	{
 		if (is_array($_data_)) {
 			extract($_data_);
@@ -110,7 +110,7 @@ class Yii2DebugPanel extends CComponent
 	 * @return string
 	 * @deprecated
 	 */
-	protected function renderDetail($caption, $values)
+	public function renderDetail($caption, $values)
 	{
 		return $this->render(dirname(__FILE__) . '/views/panels/_detail.php', array(
 			'caption' => $caption,
@@ -124,7 +124,7 @@ class Yii2DebugPanel extends CComponent
 	 * @return string
 	 * @deprecated
 	 */
-	protected function renderTabs($items)
+	public function renderTabs($items)
 	{
 		static $counter = 0;
 		return $this->render(dirname(__FILE__) . '/views/panels/_tabs.php', array(
