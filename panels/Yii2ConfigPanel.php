@@ -19,38 +19,14 @@ class Yii2ConfigPanel extends Yii2DebugPanel
 
 	public function getSummary()
 	{
-		$yiiLogo = $this->getYiiLogo();
-		$url = $this->getUrl();
-		$phpUrl = Yii::app()->getUrlManager()->createUrl($this->component->moduleId . '/default/phpinfo');
-		return <<<HTML
-<div class="yii2-debug-toolbar-block">
-	<a href="$url">
-		<img width="29" height="30" alt="" src="$yiiLogo">
-		<span>{$this->data['application']['yii']}</span>
-	</a>
-</div>
-<div class="yii2-debug-toolbar-block">
-	<a href="$phpUrl" title="Show phpinfo()">PHP {$this->data['php']['version']}</a>
-</div>
-HTML;
+		return $this->render(dirname(__FILE__) . '/../views/panels/config_bar.php', array(
+			'phpUrl' => Yii::app()->getUrlManager()->createUrl($this->component->moduleId . '/default/phpinfo'),
+		));
 	}
 
 	public function getDetail()
 	{
-		$app = array(
-			'Yii Version' => $this->data['application']['yii'],
-			'Application Name' => $this->data['application']['name'],
-			'Debug Mode' => $this->data['application']['debug'] ? 'Yes' : 'No',
-		);
-		$php = array(
-			'PHP Version' => $this->data['php']['version'],
-			'Xdebug' => $this->data['php']['xdebug'] ? 'Enabled' : 'Disabled',
-			'APC' => $this->data['php']['apc'] ? 'Enabled' : 'Disabled',
-			'Memcache' => $this->data['php']['memcache'] ? 'Enabled' : 'Disabled',
-		);
-		return $this->renderDetail('Application Configuration', $app) . "\n"
-			. $this->renderDetail('PHP Configuration', $php) . "\n"
-			. '<div>' . CHtml::link('phpinfo()', array('phpinfo'), array('class' => 'btn btn-info')) . "</div>\n";
+		return $this->render(dirname(__FILE__) . '/../views/panels/config.php');
 	}
 
 	public function save()
