@@ -20,139 +20,71 @@ class Yii2DbPanel extends Yii2DebugPanel
 	public function getSummary()
 	{
 		$timings = $this->calculateTimings();
-		$queryCount = count($timings);
-		$queryTime = 0;
+		$count = count($timings);
+		$time = 0;
 		foreach ($timings as $timing) {
-			$queryTime += $timing[4];
+			$time += $timing[4];
 		}
-		$queryTime = number_format($queryTime * 1000) . ' ms';
-		$url = $this->getUrl();
-		$output = <<<HTML
-<div class="yii2-debug-toolbar-block">
-	<a href="$url" title="Executed $queryCount database queries which took $queryTime.">
-		DB <span class="label">$queryCount</span> <span class="label">$queryTime</span>
-	</a>
-</div>
-HTML;
-		return $queryCount > 0 ? $output : '';
+		if (!$count) return '';
+		return $this->render(dirname(__FILE__) . '/../views/panels/db_bar.php', array(
+			'count' => $count,
+			'time' => number_format($time * 1000) . ' ms',
+		));
 	}
 
 	public function getDetail()
 	{
-		$queriesCount = count($this->calculateTimings());
-		$resumeCount = count($this->calculateResume());
-		$connectionsCount = count($this->data['connections']);
-		return $this->renderTabs(array(
-			array(
-				'label' => "Queries ($queriesCount)",
-				'content' => $this->getQueriesDetail(),
-				'active' => true,
-			),
-			array(
-				'label' => "Resume ($resumeCount)",
-				'content' => $this->getResumeDetail(),
-			),
-			array(
-				'label' => "Connections ($connectionsCount)",
-				'content' => $this->getConnectionsDetail(),
-			)
+		return $this->render(dirname(__FILE__) . '/../views/panels/db.php', array(
+			'queries' => $this->getQueriesInfo(),
+			'queriesCount' => count($this->calculateTimings()),
+			'resume' => $this->getResumeInfo(),
+			'resumeCount' => count($this->calculateResume()),
+			'connectionsCount' => count($this->data['connections']),
+			'connections' => $this->getConnectionsInfo(),
 		));
 	}
 
 	/**
-	 * @return string html-контент закладки со списком sql-запросов
+	 * @return array
 	 */
-	protected function getQueriesDetail()
+	protected function getQueriesInfo()
 	{
-		$rows = array();
+		$items = array();
 		foreach ($this->calculateTimings() as $timing) {
-			$time = $timing[3];
-			$time = date('H:i:s.', $time) . sprintf('%03d', (int)(($time - (int)$time) * 1000));
-			$duration = sprintf('%.1f ms', $timing[4] * 1000);
-			$procedure = $this->formatSql($timing[1]);
-			if ($this->highlightCode) {
-				$procedure = $this->highlightSql($procedure);
-			} else {
-				$procedure = CHtml::encode($procedure);
-			}
-			$rows[] = "<tr><td style=\"width: 100px;\">$time</td><td style=\"width: 80px;\">$duration</td><td>$procedure</td>";
+			$items[] = array(
+				'time' => date('H:i:s.', $timing[3]) . sprintf('%03d', (int)(($timing[3] - (int)$timing[3]) * 1000)),
+				'duration' => sprintf('%.1f ms', $timing[4] * 1000),
+				'procedure' => $this->formatSql($timing[1]),
+			);
 		}
-		$rows = implode("\n", $rows);
-		return <<<HTML
-<table class="table table-condensed table-bordered table-striped table-hover table-filtered" style="table-layout: fixed;">
-<thead>
-<tr>
-	<th style="width: 100px;">Time</th>
-	<th style="width: 80px;">Duration</th>
-	<th>Query</th>
-</tr>
-</thead>
-<tbody>
-$rows
-</tbody>
-</table>
-HTML;
+		return $items;
 	}
 
 	/**
-	 * @return string html-контент закладки с группировкой sql-запросов
+	 * @return array
 	 */
-	protected function getResumeDetail()
+	protected function getResumeInfo()
 	{
-		$rows = array();
-		$num = 0;
+		$items = array();
 		foreach ($this->calculateResume() as $item) {
-			$num++;
-			list($query, $count, $total, $min, $max) = $item;
-			if ($this->highlightCode) {
-				$query = $this->highlightSql($query);
-			} else {
-				$query = CHtml::encode($query);
-			}
-			$avg = sprintf('%.1f ms', $total * 1000 / $count);
-			$total = sprintf('%.1f ms', $total * 1000);
-			$min = sprintf('%.1f ms', $min * 1000);
-			$max = sprintf('%.1f ms', $max * 1000);
-			$rows[] = <<<HTML
-<tr>
-	<td style="width:30px;">$num</td>
-	<td>$query</td>
-	<td style="width:50px;">$count</td>
-	<td style="width:70px;">$total</td>
-	<td style="width:70px;">$avg</td>
-	<td style="width:70px;">$min</td>
-	<td style="width:70px;">$max</td>
-</tr>
-HTML;
+			$items[] = array(
+				'procedure' => $item[0],
+				'count' => $item[1],
+				'total' => sprintf('%.1f ms', $item[2] * 1000),
+				'avg' => sprintf('%.1f ms', $item[2] * 1000 / $item[1]),
+				'min' => sprintf('%.1f ms', $item[3] * 1000),
+				'max' => sprintf('%.1f ms', $item[4] * 1000),
+			);
 		}
-		$rows = implode("\n", $rows);
-		return <<<HTML
-<table class="table table-condensed table-bordered table-striped table-hover table-filtered" style="table-layout: fixed;">
-<thead>
-<tr>
-	<th style="width:30px;">#</th>
-	<th>Query</th>
-	<th style="width:50px;">Count</th>
-	<th style="width:70px;">Total</th>
-	<th style="width:70px;">Avg</th>
-	<th style="width:70px;">Min</th>
-	<th style="width:70px;">Max</th>
-</tr>
-</thead>
-<tbody>
-$rows
-</tbody>
-</table>
-HTML;
+		return $items;
 	}
 
 	/**
-	 * @return string html-контент закладки с детальной информацией активных
-	 * подключений к базам данных
+	 * @return array
 	 */
-	protected function getConnectionsDetail()
+	protected function getConnectionsInfo()
 	{
-		$content = '';
+		$connections = array();
 		foreach ($this->data['connections'] as $id => $connection) {
 			$caption = "Component: $id ($connection[class])";
 			unset($connection['class']);
@@ -163,9 +95,9 @@ HTML;
 				}
 				unset($connection['info']);
 			}
-			$content .= $this->renderDetail($caption, $connection);
+			$connections[$caption] = $connection;
 		}
-		return $content;
+		return $connections;
 	}
 
 	private $_timings;
@@ -302,7 +234,7 @@ HTML;
 	 * @param string $sql
 	 * @return string
 	 */
-	protected function highlightSql($sql)
+	public function highlightSql($sql)
 	{
 		if ($this->_hl === null) {
 			$this->_hl = Yii::createComponent(array(
