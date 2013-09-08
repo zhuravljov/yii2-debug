@@ -23,7 +23,6 @@ $this->pageTitle = 'Yii Debugger';
 			<table class="table table-condensed table-bordered table-striped table-hover table-filtered" style="table-layout: fixed;">
 				<thead>
 				<tr>
-					<th style="width: 120px;">Tag</th>
 					<th style="width: 160px;">Time</th>
 					<th style="width: 120px;">IP</th>
 					<th style="width: 60px;">Method</th>
@@ -33,8 +32,7 @@ $this->pageTitle = 'Yii Debugger';
 				<tbody>
 				<?php foreach ($manifest as $tag => $data): ?>
 					<tr>
-						<td><?php echo CHtml::link($tag, array('view', 'tag' => $tag)); ?></td>
-						<td><?php echo date('Y-m-d h:i:s', $data['time']); ?></td>
+						<td><?php echo CHtml::link(date('Y-m-d h:i:s', $data['time']), array('view', 'tag' => $tag)); ?></td>
 						<td><?php echo $data['ip']; ?></td>
 						<td><?php echo $data['method']; ?></td>
 						<td style="word-break:break-all;"><?php echo $data['url']; ?></td>

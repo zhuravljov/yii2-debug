@@ -48,7 +48,7 @@ $this->pageTitle = 'Yii Debugger';
 							<?php
 							$count = 0;
 							foreach ($manifest as $meta) {
-								$label = $meta['tag'] . ': ' . $meta['method'] . ' ' . $meta['url'] . ($meta['ajax'] ? ' (AJAX)' : '')
+								$label = $meta['method'] . ' ' . $meta['url'] . ($meta['ajax'] ? ' (AJAX)' : '')
 									. ', ' . date('Y-m-d h:i:s', $meta['time'])
 									. ', ' . $meta['ip'];
 								$url = array('view', 'tag' => $meta['tag'], 'panel' => $activePanel->id);
@@ -68,7 +68,6 @@ $this->pageTitle = 'Yii Debugger';
 							?>
 						</ul>
 					</div>
-					<?php echo $summary['tag']; ?>:
 					<?php echo $summary['method']; ?>
 					<?php echo CHtml::link(CHtml::encode($summary['url']), $summary['url']); ?>
 					<?php echo $summary['ajax'] ? ' (AJAX)' : ''; ?>
