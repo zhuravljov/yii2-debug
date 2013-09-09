@@ -37,7 +37,7 @@
 </ul>
 <div class="tab-content">
 	<div id="queries" class="tab-pane active">
-		<table class="table table-condensed table-bordered table-striped table-hover table-filtered" style="table-layout:fixed">
+		<table class="table table-condensed table-bordered table-filtered" style="table-layout:fixed">
 			<thead>
 			<tr>
 				<th style="width:100px">Time</th>
@@ -46,7 +46,7 @@
 			</tr>
 			</thead>
 			<tbody>
-			<?php foreach ($queries as $i => $query): ?>
+			<?php foreach ($queries as $num => $query): ?>
 				<tr>
 					<td style="width:100px"><?= $query['time'] ?></td>
 					<td style="width:80px"><?= $query['duration'] ?></td>
@@ -55,6 +55,38 @@
 							$this->highlightSql($query['procedure']) :
 							CHtml::encode($query['procedure'])
 						?>
+						<?php if ($this->canExplain && count($explainConnections = $this->getExplainConnections($query['procedure'])) > 0): ?>
+							<div class="pull-right">
+								<?php if (count($explainConnections) > 1): ?>
+									<div class="btn-group">
+										<button class="btn btn-link btn-small" data-toggle="dropdown">
+											Explain <span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu pull-right">
+											<?php foreach ($explainConnections as $name => $info): ?>
+												<li>
+													<?= CHtml::link("$name - $info[driver]", array(
+														'explain',
+														'tag' => $this->tag,
+														'num' => $num,
+														'connection' => $name,
+													), array('class' => 'explain')) ?>
+												</li>
+											<?php endforeach; ?>
+										</ul>
+									</div>
+								<?php else: ?>
+									<?php foreach ($explainConnections as $name => $info): ?>
+										<?= CHtml::link('Explain', array(
+											'explain',
+											'tag' => $this->tag,
+											'num' => $num,
+											'connection' => $name,
+										), array('class' => 'explain btn btn-link btn-small')) ?>
+									<?php endforeach; ?>
+								<?php endif; ?>
+							</div>
+						<?php endif; ?>
 					</td>
 				</tr>
 			<?php endforeach; ?>
@@ -75,9 +107,9 @@
 				</tr>
 			</thead>
 			<tbody>
-			<?php foreach ($resume as $i => $query): ?>
+			<?php foreach ($resume as $num => $query): ?>
 				<tr>
-					<td style="width:30px;"><?= $i + 1 ?></td>
+					<td style="width:30px;"><?= $num + 1 ?></td>
 					<td>
 						<?= $this->highlightCode ?
 							$this->highlightSql($query['procedure']) :
@@ -103,3 +135,27 @@
 	<?php endforeach; ?>
 	</div><!-- connections -->
 </div>
+<?php
+Yii::app()->getClientScript()->registerScript(__CLASS__ . '#explain', <<<JS
+$('a.explain').click(function(e){
+	if (e.altKey || e.ctrlKey || e.shiftKey) return;
+	e.preventDefault();
+	var block = $(this).data('explain-block');
+	if (!block) {
+		block = $('<tr>').insertAfter($(this).parents('tr').get(0));
+		var div = $('<div class="explain">').appendTo($('<td colspan="3">').appendTo(block));
+		div.text('Loading...');
+		div.load($(this).attr('href'), {ajax: 1}, function(response, status, xhr){
+			if (status == "error") {
+				div.text(xhr.status + ': ' + xhr.statusText);
+				block.addClass('error');
+			}
+		});
+		$(this).data('explain-block', block);
+	} else {
+		block.toggle();
+	}
+});
+JS
+);
+?>

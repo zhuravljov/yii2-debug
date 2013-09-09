@@ -55,6 +55,50 @@ class DefaultController extends CController
 	}
 
 	/**
+	 * @param string $tag
+	 * @param int $num
+	 * @param string $connection
+	 * @throws CHttpException
+	 * @throws Exception
+	 */
+	public function actionExplain($tag, $num, $connection)
+	{
+		$this->loadData($tag);
+
+		$dbPanel = $this->getComponent()->panels['db'];
+		if (!($dbPanel instanceof Yii2DbPanel)) {
+			throw new Exception('Yii2DbPanel not found');
+		}
+		if (!$dbPanel->canExplain) {
+			throw new CHttpException(403, 'Forbidden');
+		}
+		$query = $dbPanel->queryByNum($num);
+		if ($query === null) {
+			throw new Exception("Not found query by number $num");
+		}
+		/* @var CDbConnection $db */
+		$db = Yii::app()->getComponent($connection);
+
+		if (!Yii::app()->request->isAjaxRequest) {
+			$this->render('explain', array(
+				'tag' => $tag,
+				'summary' => $this->summary,
+				'manifest' => $this->getManifest(),
+				'panels' => $this->getComponent()->panels,
+				'dbPanel' => $dbPanel,
+				'connection' => $db,
+				'procedure' => Yii2DbPanel::getExplainQuery($query, $db->driverName),
+				'explainRows' => Yii2DbPanel::explain($query, $db),
+			));
+		} else {
+			$this->renderPartial('_explain', array(
+				'connection' => $db,
+				'explainRows' => Yii2DbPanel::explain($query, $db),
+			));
+		}
+	}
+
+	/**
 	 * Генерирует код дебаг-панели по ajax-запросу
 	 * @param $tag
 	 */

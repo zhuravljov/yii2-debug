@@ -11,6 +11,10 @@ class Yii2DbPanel extends Yii2DebugPanel
 	 * @var bool вставлять или нет значения параметров в sql-запрос
 	 */
 	public $insertParamValues = true;
+	/**
+	 * @var bool разрешен или нет explain для sql-запросов
+	 */
+	public $canExplain = true;
 
 	public function getName()
 	{
@@ -270,5 +274,67 @@ class Yii2DbPanel extends Yii2DebugPanel
 			'messages' => $messages,
 			'connections' => $connections,
 		);
+	}
+
+	/**
+	 * Return explain procedure or null
+	 * @param string $query
+	 * @param string $driver name
+	 * @return string|null
+	 */
+	public static function getExplainQuery($query, $driver)
+	{
+		if (preg_match('/^\s*SELECT/', $query)) {
+			switch ($driver) {
+				case 'mysql': return 'EXPLAIN ' . $query;
+				// TODO: other drivers
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Run explain procedure
+	 * @param string $query
+	 * @param CDbConnection $connection
+	 * @return array
+	 */
+	public static function explain($query, $connection)
+	{
+		$procedure = static::getExplainQuery($query, $connection->driverName);
+		if ($procedure === null) {
+			throw new Exception('Explain not available');
+		}
+		return $connection->createCommand($procedure)->queryAll();
+	}
+
+	/**
+	 * Return connection list for query
+	 * @param string $query
+	 * @return array connection list
+	 */
+	public function getExplainConnections($query)
+	{
+		$connections = array();
+		foreach ($this->data['connections'] as $name => $connection) {
+			if (static::getExplainQuery($query, $connection['driver']) !== null) {
+				$connections[$name] = $connection;
+			}
+		}
+		return $connections;
+	}
+
+	/**
+	 * @param int $number
+	 * @return string sql-query
+	 */
+	public function queryByNum($number)
+	{
+		foreach ($this->calculateTimings() as $timing) {
+			if (!$number--) {
+				return $this->formatSql($timing[1]);
+			}
+		}
+		return null;
 	}
 }
