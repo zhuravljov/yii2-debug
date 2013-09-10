@@ -12,6 +12,10 @@
 class Yii2Debug extends CApplicationComponent
 {
 	/**
+	 * @var array список пользователей которым разрешен доступ к панели
+	 */
+	public $allowedUsers = array('*');
+	/**
 	 * @var array список ip и масок, которым разрешен доступ к панели
 	 */
 	public $allowedIPs = array('127.0.0.1', '::1');
@@ -230,6 +234,14 @@ JS
 	 */
 	public function checkAccess()
 	{
+		$user = Yii::app()->user->name;
+		foreach ($this->allowedUsers as $filter) {
+			if ($filter === '*' || $filter === $user) {
+				return true;
+			}
+		return false;
+		}
+		
 		$ip = Yii::app()->getRequest()->getUserHostAddress();
 		foreach ($this->allowedIPs as $filter) {
 			if (
