@@ -188,13 +188,13 @@ class Yii2DbPanel extends Yii2DebugPanel
 		if (strpos($sql, '. Bound with ') !== false) {
 			list($query, $params) = explode('. Bound with ', $sql);
 			if (!$this->insertParamValues) return $query;
-			$sql = strtr($query, $this->parseParamsSql($params));
+			$sql = $this->insertParamsToSql($query, $this->parseParamsSql($params));
 		}
 		return $sql;
 	}
 
 	/**
-	 * Парсинг строки с параметрами
+	 * Парсинг строки с параметрами типа (:xxx, ?)
 	 * @param string $params
 	 * @return array key/value
 	 */
@@ -202,7 +202,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 	{
 		$binds = array();
 		$pos = 0;
-		while (preg_match('/(\:[a-z0-9\.\_\-]+)\s*\=\s*/', $params, $m, PREG_OFFSET_CAPTURE, $pos)) {
+		while (preg_match('/((?:\:[a-z0-9\.\_\-]+)|\d+)\s*\=\s*/', $params, $m, PREG_OFFSET_CAPTURE, $pos)) {
 			$start = $m[0][1] + strlen($m[0][0]);
 			$key = $m[1][0];
 			if (($params{$start} == '"') || ($params{$start} == "'")) {
@@ -226,6 +226,62 @@ class Yii2DbPanel extends Yii2DebugPanel
 			}
 		}
 		return $binds;
+	}
+
+	/**
+	 * Умная подстановка параметров в SQL-запрос.
+	 *
+	 * Поиск параметров производится за пределами строк в кавычках ["'`].
+	 * Значения подставляются для параметров типа (:xxx, ?).
+	 * @param string $query
+	 * @param array $params
+	 * @return string
+	 */
+	private function insertParamsToSql($query, $params)
+	{
+		$sql = '';
+		$pos = 0;
+		do {
+			// Выявление ближайшей заэкранированной части строки
+			$quote = '';
+			if (preg_match('/[`"\']/', $query, $m, PREG_OFFSET_CAPTURE, $pos)) {
+				$qchar = $m[0][0];
+				$qbegin = $m[0][1];
+				$qend = $qbegin;
+				do {
+					$sls = 0;
+					if (($qend = strpos($query, $qchar, $qend + 1)) !== false) {
+						while ($query{$qend - $sls - 1} == '\\') $sls++;
+					} else {
+						$qend = strlen($query) - 1;
+					}
+				} while ($sls % 2);
+				$quote = substr($query, $qbegin, $qend - $qbegin + 1);
+				$token = substr($query, $pos, $qbegin - $pos);
+				$pos = $qend + 1;
+			} else {
+				$token = substr($query, $pos);
+			}
+			// Подстановка параметров в незаэкранированную часть SQL
+			$subsql = '';
+			$pind= 0;
+			$tpos = 0;
+			while (preg_match('/\:[a-z0-9\.\_\-]+|\?/', $token, $m, PREG_OFFSET_CAPTURE, $tpos)) {
+				$key = $m[0][0];
+				if ($key == '?') $key = $pind++;
+				if (isset($params[$key])) {
+					$value = $params[$key];
+				} else {
+					$value = $m[0][0];
+				}
+				$subsql .= substr($token, $tpos, $m[0][1] - $tpos) . $value;
+				$tpos = $m[0][1] + strlen($m[0][0]);
+			}
+			$subsql .= substr($token, $tpos);
+			// Склейка
+			$sql .= $subsql . $quote;
+		} while ($quote !== '');
+		return $sql;
 	}
 
 	/**
