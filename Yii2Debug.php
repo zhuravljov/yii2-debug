@@ -16,6 +16,10 @@ class Yii2Debug extends CApplicationComponent
 	 */
 	public $allowedIPs = array('127.0.0.1', '::1');
 	/**
+	 * @var null|string|callback дополнительное условие доступа к панели
+	 */
+	public $accessExpression;
+	/**
 	 * @var array|Yii2DebugPanel[]
 	 */
 	public $panels = array();
@@ -230,6 +234,12 @@ JS
 	 */
 	public function checkAccess()
 	{
+		if (
+			$this->accessExpression !== null &&
+			!$this->evaluateExpression($this->accessExpression)
+		) {
+			return false;
+		}
 		$ip = Yii::app()->getRequest()->getUserHostAddress();
 		foreach ($this->allowedIPs as $filter) {
 			if (
