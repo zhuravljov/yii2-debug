@@ -4,6 +4,21 @@
  * @var CDbConnection $connection
  * @var array $explainRows
  */
+
+// Пробелы после знаков препинания для компактного вывода в таблицу
+if ($connection->driverName == 'mysql') {
+	foreach ($explainRows as &$row) {
+		foreach ($row as &$cell) {
+			$cell = preg_replace('/\s*[,:;]\s*/', '$0 ', $cell);
+			$cell = preg_replace('/\s*[\[({]\s*/', ' $0', $cell);
+			$cell = preg_replace('/\s*[\])}]\s*/', '$0 ', $cell);
+			$cell = preg_replace('/([\[({])\s+([\[({])/', '$1$2', $cell);
+			$cell = preg_replace('/([\])}])\s+([\])}.,:;])/', '$1$2', $cell);
+		}
+		unset($cell);
+	}
+	unset($row);
+}
 ?>
 <?php if (($first = reset($explainRows)) !== false): ?>
 	<table class="table table-condensed table-bordered">
