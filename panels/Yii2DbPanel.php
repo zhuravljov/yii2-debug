@@ -343,8 +343,9 @@ class Yii2DbPanel extends Yii2DebugPanel
 		if (preg_match('/^\s*SELECT/', $query)) {
 			switch ($driver) {
 				case 'mysql': return 'EXPLAIN ' . $query;
+				case 'pgsql': return 'EXPLAIN ' . $query;
 				case 'sqlite': return 'EXPLAIN QUERY PLAN ' . $query;
-				// TODO: other drivers
+				case 'oci': return 'EXPLAIN PLAN FOR ' . $query;
 			}
 		}
 		return null;
