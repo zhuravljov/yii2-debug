@@ -40,6 +40,10 @@ class Yii2Debug extends CApplicationComponent
 	 */
 	public $moduleId = 'debug';
 	/**
+	 * @var bool использование внутренних url-правил
+	 */
+	public $internalUrls = true;
+		/**
 	 * @var bool подсветка кода на страницах с отладочной информацией
 	 */
 	public $highlightCode = true;
@@ -83,6 +87,14 @@ class Yii2Debug extends CApplicationComponent
 			),
 		)));
 
+		if ($this->internalUrls) {
+			$rules = array();
+			foreach ($this->coreUrlRules() as $key => $value) {
+				$rules[$this->moduleId . '/' . $key] = $this->moduleId . '/' . $value;
+			}
+			Yii::app()->getUrlManager()->addRules($rules, false);
+		}
+
 		Yii::app()->attachEventHandler('onEndRequest', array($this, 'onEndRequest'));
 		$this->initToolbar();
 	}
@@ -99,7 +111,7 @@ class Yii2Debug extends CApplicationComponent
 	/**
 	 * @return array страницы по умолчанию
 	 */
-	public function corePanels()
+	protected function corePanels()
 	{
 		return array(
 			'config' => array(
@@ -120,10 +132,21 @@ class Yii2Debug extends CApplicationComponent
 		);
 	}
 
+	protected function coreUrlRules()
+	{
+		return array(
+			'' => 'default/index',
+			'<tag:[0-9a-f]+>/<action:toolbar|explain>' => 'default/<action>',
+			'<tag:[0-9a-f]+>/<panel:\w+>' => 'default/view',
+			'<tag:[0-9a-f]+>' => 'default/view',
+			'<action:\w+>' => 'default/<action>',
+		);
+	}
+
 	/**
 	 * Регистрация скриптов для загрузки дебаг-панели
 	 */
-	public function initToolbar()
+	protected function initToolbar()
 	{
 		if (!$this->checkAccess()) return;
 		$assetsUrl = CHtml::asset(dirname(__FILE__) . '/assets');
