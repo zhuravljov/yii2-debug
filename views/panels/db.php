@@ -145,7 +145,7 @@ $('a.explain').click(function(e){
 		block = $('<tr>').insertAfter($(this).parents('tr').get(0));
 		var div = $('<div class="explain">').appendTo($('<td colspan="3">').appendTo(block));
 		div.text('Loading...');
-		div.load($(this).attr('href'), {ajax: 1}, function(response, status, xhr){
+		div.load($(this).attr('href'), function(response, status, xhr){
 			if (status == "error") {
 				div.text(xhr.status + ': ' + xhr.statusText);
 				block.addClass('error');
