@@ -180,14 +180,13 @@ class Yii2DbPanel extends Yii2DebugPanel
 	 * @param string $message
 	 * @return string
 	 */
-	protected function formatSql($message)
+	protected function formatSql($message, $forceInsert = false)
 	{
 		$sqlStart = strpos($message, '(') + 1;
 		$sqlEnd = strrpos($message , ')');
 		$sql = substr($message, $sqlStart, $sqlEnd - $sqlStart);
-		if (strpos($sql, '. Bound with ') !== false) {
+		if (strpos($sql, '. Bound with ') !== false && ($this->insertParamValues || $forceInsert)) {
 			list($query, $params) = explode('. Bound with ', $sql);
-			if (!$this->insertParamValues) return $query;
 			$sql = $this->insertParamsToSql($query, $this->parseParamsSql($params));
 		}
 		return $sql;
@@ -386,11 +385,11 @@ class Yii2DbPanel extends Yii2DebugPanel
 	 * @param int $number
 	 * @return string sql-query
 	 */
-	public function queryByNum($number)
+	public function queryByNum($number, $forceInsert = false)
 	{
 		foreach ($this->calculateTimings() as $timing) {
 			if (!$number--) {
-				return $this->formatSql($timing[1]);
+				return $this->formatSql($timing[1], $forceInsert);
 			}
 		}
 		return null;

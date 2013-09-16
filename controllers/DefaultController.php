@@ -72,7 +72,7 @@ class DefaultController extends CController
 		if (!$dbPanel->canExplain) {
 			throw new CHttpException(403, 'Forbidden');
 		}
-		$query = $dbPanel->queryByNum($num);
+		$query = $dbPanel->queryByNum($num, true);
 		if ($query === null) {
 			throw new Exception("Not found query by number $num");
 		}
