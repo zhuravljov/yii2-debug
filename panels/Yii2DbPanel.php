@@ -180,14 +180,13 @@ class Yii2DbPanel extends Yii2DebugPanel
 	 * @param string $message
 	 * @return string
 	 */
-	protected function formatSql($message)
+	protected function formatSql($message, $forceInsert = false)
 	{
 		$sqlStart = strpos($message, '(') + 1;
 		$sqlEnd = strrpos($message , ')');
 		$sql = substr($message, $sqlStart, $sqlEnd - $sqlStart);
-		if (strpos($sql, '. Bound with ') !== false) {
+		if (strpos($sql, '. Bound with ') !== false && ($this->insertParamValues || $forceInsert)) {
 			list($query, $params) = explode('. Bound with ', $sql);
-			if (!$this->insertParamValues) return $query;
 			$sql = $this->insertParamsToSql($query, $this->parseParamsSql($params));
 		}
 		return $sql;
@@ -202,7 +201,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 	{
 		$binds = array();
 		$pos = 0;
-		while (preg_match('/((?:\:[a-z0-9\.\_\-]+)|\d+)\s*\=\s*/', $params, $m, PREG_OFFSET_CAPTURE, $pos)) {
+		while (preg_match('/((?:\:[a-z0-9\.\_\-]+)|\d+)\s*\=\s*/i', $params, $m, PREG_OFFSET_CAPTURE, $pos)) {
 			$start = $m[0][1] + strlen($m[0][0]);
 			$key = $m[1][0];
 			if (($params{$start} == '"') || ($params{$start} == "'")) {
@@ -266,7 +265,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 			$subsql = '';
 			$pind= 0;
 			$tpos = 0;
-			while (preg_match('/\:[a-z0-9\.\_\-]+|\?/', $token, $m, PREG_OFFSET_CAPTURE, $tpos)) {
+			while (preg_match('/\:[a-z0-9\.\_\-]+|\?/i', $token, $m, PREG_OFFSET_CAPTURE, $tpos)) {
 				$key = $m[0][0];
 				if ($key == '?') $key = $pind++;
 				if (isset($params[$key])) {
@@ -386,11 +385,11 @@ class Yii2DbPanel extends Yii2DebugPanel
 	 * @param int $number
 	 * @return string sql-query
 	 */
-	public function queryByNum($number)
+	public function queryByNum($number, $forceInsert = false)
 	{
 		foreach ($this->calculateTimings() as $timing) {
 			if (!$number--) {
-				return $this->formatSql($timing[1]);
+				return $this->formatSql($timing[1], $forceInsert);
 			}
 		}
 		return null;
