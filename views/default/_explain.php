@@ -25,7 +25,7 @@ if ($connection->driverName == 'mysql') {
 		<thead>
 		<tr>
 			<?php foreach (array_keys($first) as $key): ?>
-				<th><?= CHtml::encode($key) ?></th>
+				<th><?php echo CHtml::encode($key) ?></th>
 			<?php endforeach; ?>
 		</tr>
 		</thead>
@@ -33,7 +33,7 @@ if ($connection->driverName == 'mysql') {
 		<?php foreach ($explainRows as $row): ?>
 			<tr>
 				<?php foreach ($row as $value): ?>
-					<td><?= CHtml::encode($value) ?></td>
+					<td><?php echo CHtml::encode($value) ?></td>
 				<?php endforeach; ?>
 			</tr>
 		<?php endforeach; ?>

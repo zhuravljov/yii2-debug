@@ -1,7 +1,7 @@
 <?php
 /* @var Yii2ConfigPanel $this */
 ?>
-<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
+<?php echo $this->render(dirname(__FILE__) . '/_detail.php', array(
 	'caption' => 'Application Configuration',
 	'values' => array(
 		'Yii Version' => $this->data['application']['yii'],
@@ -9,7 +9,7 @@
 		'Debug Mode' => $this->data['application']['debug'] ? 'Yes' : 'No',
 	),
 )) ?>
-<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
+<?php echo $this->render(dirname(__FILE__) . '/_detail.php', array(
 	'caption' => 'PHP Configuration',
 	'values' => array(
 		'PHP Version' => $this->data['php']['version'],
@@ -19,5 +19,5 @@
 	),
 )) ?>
 <div>
-	<?= CHtml::link('phpinfo()', array('phpinfo'), array('class' => 'btn btn-info')) ?>
+	<?php echo CHtml::link('phpinfo()', array('phpinfo'), array('class' => 'btn btn-info')) ?>
 </div>
