@@ -11,19 +11,19 @@
 	<li class="active">
 		<a href="#queries" data-toggle="tab">
 			Queries
-			<span class="badge badge-info"><?= $queriesCount ?></span>
+			<span class="badge badge-info"><?php echo $queriesCount ?></span>
 		</a>
 	</li>
 	<li>
 		<a href="#resume" data-toggle="tab">
 			Resume
 			<?php if ($queriesCount > $resumeCount): ?>
-				<span class="badge badge-warning" title="Repeated queries: <?= $queriesCount - $resumeCount ?>">
-					<?= $resumeCount ?>
+				<span class="badge badge-warning" title="Repeated queries: <?php echo $queriesCount - $resumeCount ?>">
+					<?php echo $resumeCount ?>
 				</span>
 			<?php else: ?>
 				<span class="badge badge-info">
-					<?= $resumeCount ?>
+					<?php echo $resumeCount ?>
 				</span>
 			<?php endif; ?>
 		</a>
@@ -31,7 +31,7 @@
 	<li>
 		<a href="#connections" data-toggle="tab">
 			Connections
-			<span class="badge badge-info"><?= $connectionsCount ?></span>
+			<span class="badge badge-info"><?php echo $connectionsCount ?></span>
 		</a>
 	</li>
 </ul>
@@ -48,10 +48,10 @@
 			<tbody>
 			<?php foreach ($queries as $num => $query): ?>
 				<tr>
-					<td style="width:100px"><?= $query['time'] ?></td>
-					<td style="width:80px"><?= $query['duration'] ?></td>
+					<td style="width:100px"><?php echo $query['time'] ?></td>
+					<td style="width:80px"><?php echo $query['duration'] ?></td>
 					<td>
-						<?= $this->highlightCode ?
+						<?php echo $this->highlightCode ?
 							$this->highlightSql($query['procedure']) :
 							CHtml::encode($query['procedure'])
 						?>
@@ -65,7 +65,7 @@
 										<ul class="dropdown-menu pull-right">
 											<?php foreach ($explainConnections as $name => $info): ?>
 												<li>
-													<?= CHtml::link("$name - $info[driver]", array(
+													<?php echo CHtml::link("$name - $info[driver]", array(
 														'explain',
 														'tag' => $this->tag,
 														'num' => $num,
@@ -77,7 +77,7 @@
 									</div>
 								<?php else: ?>
 									<?php foreach ($explainConnections as $name => $info): ?>
-										<?= CHtml::link('Explain', array(
+										<?php echo CHtml::link('Explain', array(
 											'explain',
 											'tag' => $this->tag,
 											'num' => $num,
@@ -109,18 +109,18 @@
 			<tbody>
 			<?php foreach ($resume as $num => $query): ?>
 				<tr>
-					<td style="width:30px;"><?= $num + 1 ?></td>
+					<td style="width:30px;"><?php echo $num + 1 ?></td>
 					<td>
-						<?= $this->highlightCode ?
+						<?php echo $this->highlightCode ?
 							$this->highlightSql($query['procedure']) :
 							CHtml::encode($query['procedure'])
 						?>
 					</td>
-					<td style="width:50px;"><?= $query['count'] ?></td>
-					<td style="width:70px;"><?= $query['total'] ?></td>
-					<td style="width:70px;"><?= $query['avg'] ?></td>
-					<td style="width:70px;"><?= $query['min'] ?></td>
-					<td style="width:70px;"><?= $query['max'] ?></td>
+					<td style="width:50px;"><?php echo $query['count'] ?></td>
+					<td style="width:70px;"><?php echo $query['total'] ?></td>
+					<td style="width:70px;"><?php echo $query['avg'] ?></td>
+					<td style="width:70px;"><?php echo $query['min'] ?></td>
+					<td style="width:70px;"><?php echo $query['max'] ?></td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>
@@ -128,7 +128,7 @@
 	</div><!-- resume -->
 	<div id="connections" class="tab-pane">
 	<?php foreach ($connections as $caption => $info): ?>
-		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
+		<?php echo $this->render(dirname(__FILE__) . '/_detail.php', array(
 			'caption' => $caption,
 			'values' => $info,
 		)) ?>
