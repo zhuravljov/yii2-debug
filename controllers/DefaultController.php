@@ -72,10 +72,11 @@ class DefaultController extends CController
 		if (!$dbPanel->canExplain) {
 			throw new CHttpException(403, 'Forbidden');
 		}
-		$query = $dbPanel->queryByNum($num, true);
-		if ($query === null) {
+		$message = $dbPanel->messageByNum($num);
+		if ($message === null) {
 			throw new Exception("Not found query by number $num");
 		}
+		$query = $dbPanel->formatSql($message, true);
 		/* @var CDbConnection $db */
 		$db = Yii::app()->getComponent($connection);
 

@@ -58,7 +58,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 			$items[] = array(
 				'time' => date('H:i:s.', $timing[3]) . sprintf('%03d', (int)(($timing[3] - (int)$timing[3]) * 1000)),
 				'duration' => sprintf('%.1f ms', $timing[4] * 1000),
-				'procedure' => $this->formatSql($timing[1]),
+				'procedure' => $this->formatSql($timing[1], $this->insertParamValues),
 			);
 		}
 		return $items;
@@ -154,7 +154,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 		$resume = array();
 		foreach ($this->calculateTimings() as $timing) {
 			$duration = $timing[4];
-			$query = $this->formatSql($timing[1]);
+			$query = $this->formatSql($timing[1], $this->insertParamValues);
 			$key = md5($query);
 			if (!isset($resume[$key])) {
 				$resume[$key] = array($query, 1, $duration, $duration, $duration);
@@ -178,15 +178,17 @@ class Yii2DbPanel extends Yii2DebugPanel
 	/**
 	 * Выделение sql-запроса из лога и подстановка параметров
 	 * @param string $message
+	 * @param bool $insertParams
 	 * @return string
 	 */
-	protected function formatSql($message, $forceInsert = false)
+	public function formatSql($message, $insertParams)
 	{
 		$sqlStart = strpos($message, '(') + 1;
 		$sqlEnd = strrpos($message , ')');
 		$sql = substr($message, $sqlStart, $sqlEnd - $sqlStart);
-		if (strpos($sql, '. Bound with ') !== false && ($this->insertParamValues || $forceInsert)) {
+		if (strpos($sql, '. Bound with ') !== false) {
 			list($query, $params) = explode('. Bound with ', $sql);
+			if (!$insertParams) return $query;
 			$sql = $this->insertParamsToSql($query, $this->parseParamsSql($params));
 		}
 		return $sql;
@@ -385,11 +387,11 @@ class Yii2DbPanel extends Yii2DebugPanel
 	 * @param int $number
 	 * @return string sql-query
 	 */
-	public function queryByNum($number, $forceInsert = false)
+	public function messageByNum($number)
 	{
 		foreach ($this->calculateTimings() as $timing) {
 			if (!$number--) {
-				return $this->formatSql($timing[1], $forceInsert);
+				return $timing[1];
 			}
 		}
 		return null;
