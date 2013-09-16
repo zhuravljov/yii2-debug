@@ -202,7 +202,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 	{
 		$binds = array();
 		$pos = 0;
-		while (preg_match('/((?:\:[a-z0-9\.\_\-]+)|\d+)\s*\=\s*/', $params, $m, PREG_OFFSET_CAPTURE, $pos)) {
+		while (preg_match('/((?:\:[a-z0-9\.\_\-]+)|\d+)\s*\=\s*/i', $params, $m, PREG_OFFSET_CAPTURE, $pos)) {
 			$start = $m[0][1] + strlen($m[0][0]);
 			$key = $m[1][0];
 			if (($params{$start} == '"') || ($params{$start} == "'")) {
@@ -266,7 +266,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 			$subsql = '';
 			$pind= 0;
 			$tpos = 0;
-			while (preg_match('/\:[a-z0-9\.\_\-]+|\?/', $token, $m, PREG_OFFSET_CAPTURE, $tpos)) {
+			while (preg_match('/\:[a-z0-9\.\_\-]+|\?/i', $token, $m, PREG_OFFSET_CAPTURE, $tpos)) {
 				$key = $m[0][0];
 				if ($key == '?') $key = $pind++;
 				if (isset($params[$key])) {
