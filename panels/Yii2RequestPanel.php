@@ -53,7 +53,7 @@ class Yii2RequestPanel extends Yii2DebugPanel
 		$route = Yii::app()->getUrlManager()->parseUrl(Yii::app()->getRequest());
 		$action = null;
 		$actionParams = array();
-		if (($ca = Yii::app()->createController($route)) !== null) {
+		if (($ca = @Yii::app()->createController($route)) !== null) {
 			/* @var CController $controller */
 			/* @var string $actionID */
 			list($controller, $actionID) = $ca;
