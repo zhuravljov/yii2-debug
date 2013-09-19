@@ -26,4 +26,13 @@ class Yii2DebugModule extends CWebModule
 		else
 			return false;
 	}
+
+	/**
+	 * Блокировака сторонних шаблонизаторов
+	 */
+	public function getComponent($id, $createIfNull = true)
+	{
+		if ($id === 'viewRenderer') return;
+		parent::getComponent($id, $createIfNull);
+	}
 }
