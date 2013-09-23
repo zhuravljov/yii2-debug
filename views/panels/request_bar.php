@@ -16,7 +16,7 @@
 	</div>
 <?php endif; ?>
 <div class="yii2-debug-toolbar-block">
-	<a href="<?= $this->getUrl() ?>">
+	<a href="<?= $this->getUrl() ?>" title="Route: <?= $this->data['route'] ?>">
 		Action <span class="label"><?= $this->data['action'] ?></span>
 	</a>
 </div>
