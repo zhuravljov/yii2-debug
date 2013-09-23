@@ -87,7 +87,7 @@ class Yii2Debug extends CApplicationComponent
 			),
 		)));
 
-		if ($this->internalUrls) {
+		if ($this->internalUrls && (Yii::app()->getUrlManager()->urlFormat == 'path')) {
 			$rules = array();
 			foreach ($this->coreUrlRules() as $key => $value) {
 				$rules[$this->moduleId . '/' . $key] = $this->moduleId . '/' . $value;
