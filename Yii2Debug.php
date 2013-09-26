@@ -205,18 +205,7 @@ JS
 		if (is_file($indexFile)) {
 			$manifest = json_decode(file_get_contents($indexFile), true);
 		}
-		$request = Yii::app()->getRequest();
-		$manifest[$this->getTag()] = $summary = array(
-			'tag' => $this->getTag(),
-			'url' => $request->getHostInfo() . $request->getUrl(),
-			'ajax' => $request->getIsAjaxRequest(),
-			'method' => $request->getRequestType(),
-			'ip' => $request->getUserHostAddress(),
-			'time' => time(),
-		);
-		$this->resizeHistory($manifest);
 
-		$dataFile = "$path/{$this->getTag()}.json";
 		$data = array();
 		foreach ($this->panels as $panel) {
 			$data[$panel->id] = $panel->save();
@@ -228,9 +217,25 @@ JS
 			}
 			$panel->load($data[$panel->id]);
 		}
-		$data['summary'] = $summary;
 
-		file_put_contents($dataFile, json_encode($data));
+		$statusCode = null;
+		if (isset($this->panels['request']) && isset($this->panels['request']->data['statusCode'])) {
+			$statusCode = $this->panels['request']->data['statusCode'];
+		}
+
+		$request = Yii::app()->getRequest();
+		$manifest[$this->getTag()] = $data['summary'] = array(
+			'tag' => $this->getTag(),
+			'url' => $request->getHostInfo() . $request->getUrl(),
+			'ajax' => $request->getIsAjaxRequest(),
+			'method' => $request->getRequestType(),
+			'code' => $statusCode,
+			'ip' => $request->getUserHostAddress(),
+			'time' => time(),
+		);
+		$this->resizeHistory($manifest);
+
+		file_put_contents("$path/{$this->getTag()}.json", json_encode($data));
 		file_put_contents($indexFile, json_encode($manifest));
 	}
 

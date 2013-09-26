@@ -26,6 +26,7 @@ $this->pageTitle = 'Yii Debugger';
 					<th style="width: 160px;">Time</th>
 					<th style="width: 120px;">IP</th>
 					<th style="width: 60px;">Method</th>
+					<th style="width: 40px;">Code</th>
 					<th>URL</th>
 				</tr>
 				</thead>
@@ -35,6 +36,7 @@ $this->pageTitle = 'Yii Debugger';
 						<td><?php echo CHtml::link(date('Y-m-d h:i:s', $data['time']), array('view', 'tag' => $tag)); ?></td>
 						<td><?php echo $data['ip']; ?></td>
 						<td><?php echo $data['method']; ?></td>
+						<td><?php echo isset($data['code']) ? $data['code'] : ''; ?></td>
 						<td style="word-break:break-all;"><?php echo $data['url']; ?></td>
 					</tr>
 				<?php endforeach; ?>
