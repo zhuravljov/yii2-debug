@@ -9,6 +9,9 @@
 		'Debug Mode' => $this->data['application']['debug'] ? 'Yes' : 'No',
 	),
 )) ?>
+<div>
+	<?= CHtml::link('Configuration', array('config'), array('class' => 'btn btn-info')) ?>
+</div>
 <?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 	'caption' => 'PHP Configuration',
 	'values' => array(

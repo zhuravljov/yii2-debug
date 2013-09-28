@@ -154,4 +154,28 @@ class DefaultController extends CController
 			throw new CHttpException(404, "Unable to find debug data tagged with '$tag'.");
 		}
 	}
+
+	public function actionConfig()
+	{
+		$this->render('config', array(
+			'app' => $this->prepareData(get_object_vars(Yii::app())),
+			'components' => $this->prepareData(Yii::app()->components),
+			'modules' => $this->prepareData(Yii::app()->modules),
+			'params' => $this->prepareData(Yii::app()->params),
+		));
+	}
+
+	private function prepareData($data)
+	{
+		$result = array();
+		foreach ($data as $key => $value) {
+			if (is_object($value)) {
+				$value = array_merge(array(
+					'class' => get_class($value)
+				), get_object_vars($value));
+			}
+			$result[$key] = $value;
+		}
+		return $result;
+	}
 }
