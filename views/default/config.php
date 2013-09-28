@@ -8,6 +8,7 @@
  */
 
 $this->pageTitle = 'Configuration - Yii Debugger';
+$highlight = $this->getComponent()->highlightCode;
 ?>
 <div class="default-view">
 	<div class="navbar">
@@ -44,12 +45,15 @@ $this->pageTitle = 'Configuration - Yii Debugger';
 					</ul>
 				</div><!-- #navbar -->
 			</div><!-- .span2 -->
+
 			<div class="span10">
 				<section id="app">
 					<h2>Application</h2>
-					<div class="well well-small">
-						<?php CVarDumper::dump($app, 10, true); ?>
-					</div>
+					<?php $this->renderPartial('_vardump', array(
+						'data' => $app,
+						'depth' => 10,
+						'highlightCode' => $highlight,
+					)); ?>
 				</section><!-- #app -->
 				<section id="components">
 					<h2>Components</h2>
@@ -59,9 +63,11 @@ $this->pageTitle = 'Configuration - Yii Debugger';
 								<?= $id ?>
 								<span class="class">(<?= $component['class'] ?>)</span>
 							</h3>
-							<div class="well well-small">
-								<?php CVarDumper::dump($component, 5, true); ?>
-							</div>
+							<?php $this->renderPartial('_vardump', array(
+								'data' => $component,
+								'depth' => 5,
+								'highlightCode' => $highlight,
+							)); ?>
 						</section>
 					<?php endforeach; ?>
 				</section><!-- #components -->
@@ -70,17 +76,21 @@ $this->pageTitle = 'Configuration - Yii Debugger';
 					<?php foreach ($modules as $id => $module): ?>
 						<section id="modules-<?= $id ?>">
 							<h3><?= $id ?></h3>
-							<div class="well well-small">
-								<?php CVarDumper::dump($module, 5, true); ?>
-							</div>
+							<?php $this->renderPartial('_vardump', array(
+								'data' => $module,
+								'depth' => 5,
+								'highlightCode' => $highlight,
+							)); ?>
 						</section>
 					<?php endforeach; ?>
 				</section><!-- #modules -->
 				<section id="params">
 					<h2>Params</h2>
-					<div class="well well-small">
-						<?php CVarDumper::dump($params, 10, true); ?>
-					</div>
+					<?php $this->renderPartial('_vardump', array(
+						'data' => $params,
+						'depth' => 10,
+						'highlightCode' => $highlight,
+					)); ?>
 				</section><!-- #params -->
 			</div><!-- .span12 -->
 		</div>
