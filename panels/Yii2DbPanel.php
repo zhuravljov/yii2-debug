@@ -90,8 +90,6 @@ class Yii2DbPanel extends Yii2DebugPanel
 	{
 		$connections = array();
 		foreach ($this->data['connections'] as $id => $connection) {
-			$caption = "Component: $id ($connection[class])";
-			unset($connection['class']);
 			if (isset($connection['info'])) {
 				foreach (explode('  ', $connection['info']) as $line) {
 					list($key, $value) = explode(': ', $line, 2);
@@ -99,7 +97,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 				}
 				unset($connection['info']);
 			}
-			$connections[$caption] = $connection;
+			$connections[$id] = $connection;
 		}
 		return $connections;
 	}

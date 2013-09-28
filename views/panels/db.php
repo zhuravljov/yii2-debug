@@ -127,12 +127,18 @@
 		</table>
 	</div><!-- resume -->
 	<div id="connections" class="tab-pane">
-	<?php foreach ($connections as $caption => $info): ?>
-		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
-			'caption' => $caption,
-			'values' => $info,
-		)) ?>
-	<?php endforeach; ?>
+		<?php
+		foreach ($connections as $id => $info) {
+			$caption = 'Component: '
+				. CHtml::link($id, array('config', '#' => 'components-' . $id))
+				. ' (' . $info['class'] . ')';
+			unset($info['class']);
+			echo $this->render(dirname(__FILE__) . '/_detail.php', array(
+				'caption' => $caption,
+				'values' => $info,
+			));
+		}
+		?>
 	</div><!-- connections -->
 </div>
 <?php
