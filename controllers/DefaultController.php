@@ -160,12 +160,16 @@ class DefaultController extends CController
 		if (!$this->getComponent()->showConfig) {
 			throw new CHttpException(403, 'Forbidden');
 		}
-		$this->render('config', array(
-			'app' => $this->prepareData(get_object_vars(Yii::app())),
-			'components' => $this->prepareData(Yii::app()->components),
-			'modules' => $this->prepareData(Yii::app()->modules),
-			'params' => $this->prepareData(Yii::app()->params),
-		));
+		$data = $this->hideConfigData(
+			array(
+				'app' => $this->prepareData(get_object_vars(Yii::app())),
+				'components' => $this->prepareData(Yii::app()->components),
+				'modules' => $this->prepareData(Yii::app()->modules),
+				'params' => $this->prepareData(Yii::app()->params),
+			),
+			$this->getComponent()->hiddenConfigOptions
+		);
+		$this->render('config', $data);
 	}
 
 	private function prepareData($data)
@@ -180,5 +184,30 @@ class DefaultController extends CController
 			$result[$key] = $value;
 		}
 		return $result;
+	}
+
+	/**
+	 * @param array $config
+	 * @param array $options
+	 * @return array
+	 */
+	private function hideConfigData($config, $options)
+	{
+		foreach ($options as $option) {
+			$item = &$config;
+			foreach (explode('/', $option) as $key) {
+				if (is_array($item) && isset($item[$key])) {
+					$item = &$item[$key];
+				} else {
+					unset($item);
+					break;
+				}
+			}
+			if (isset($item)) {
+				$item = '**********';
+				unset($item);
+			}
+		}
+		return $config;
 	}
 }

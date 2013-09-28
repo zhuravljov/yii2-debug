@@ -40,10 +40,6 @@ class Yii2Debug extends CApplicationComponent
 	 */
 	public $moduleId = 'debug';
 	/**
-	 * @var bool показывать или нет страницу с конфигурацией приложения
-	 */
-	public $showConfig = false;
-	/**
 	 * @var bool использование внутренних url-правил
 	 */
 	public $internalUrls = true;
@@ -51,6 +47,18 @@ class Yii2Debug extends CApplicationComponent
 	 * @var bool подсветка кода на страницах с отладочной информацией
 	 */
 	public $highlightCode = true;
+	/**
+	 * @var bool показывать или нет страницу с конфигурацией приложения
+	 */
+	public $showConfig = false;
+	/**
+	 * @var array список опций значения которых необходимо скрывать при выводе
+	 * на страницу с конфигурацией приложения.
+	 */
+	public $hiddenConfigOptions = array(
+		'components/db/username',
+		'components/db/password',
+	);
 
 	private $_tag;
 

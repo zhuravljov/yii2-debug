@@ -26,72 +26,101 @@ $highlight = $this->getComponent()->highlightCode;
 			<div class="span2">
 				<div id="navbar" data-spy="affix" data-offset-top="60">
 					<ul class="nav nav-pills nav-stacked">
-						<li><a href="#app">Application</a></li>
-						<li><a href="#components">Components</a>
-							<ul class="sub-nav">
-								<?php foreach (array_keys($components) as $id): ?>
-									<li><a href="#components-<?= $id ?>"><?= $id ?></a></li>
-								<?php endforeach; ?>
-							</ul>
-						</li>
-						<li><a href="#modules">Modules</a>
-							<ul class="sub-nav">
-								<?php foreach (array_keys($modules) as $id): ?>
-									<li><a href="#modules-<?= $id ?>"><?= $id ?></a></li>
-								<?php endforeach; ?>
-							</ul>
-						</li>
-						<li><a href="#params">Params</a></li>
+						<?php if (is_array($app)): ?>
+							<li><a href="#app">Application</a></li>
+						<?php endif; ?>
+						<?php if (is_array($components)): ?>
+							<li><a href="#components">Components</a>
+								<ul class="sub-nav">
+									<?php foreach ($components as $id => $component): ?>
+										<?php if (is_array($component)): ?>
+											<li><a href="#components-<?= $id ?>"><?= $id ?></a></li>
+										<?php endif; ?>
+									<?php endforeach; ?>
+								</ul>
+							</li>
+						<?php endif; ?>
+						<?php if (is_array($modules)): ?>
+							<li><a href="#modules">Modules</a>
+								<ul class="sub-nav">
+									<?php foreach ($modules as $id => $module): ?>
+										<?php if (is_array($module)): ?>
+											<li><a href="#modules-<?= $id ?>"><?= $id ?></a></li>
+										<?php endif; ?>
+									<?php endforeach; ?>
+								</ul>
+							</li>
+						<?php endif; ?>
+						<?php if (is_array($params)): ?>
+							<li><a href="#params">Params</a></li>
+						<?php endif; ?>
 					</ul>
 				</div><!-- #navbar -->
 			</div><!-- .span2 -->
 
 			<div class="span10">
-				<section id="app">
-					<h2>Application</h2>
-					<?php $this->renderPartial('_vardump', array(
-						'data' => $app,
-						'depth' => 10,
-						'highlightCode' => $highlight,
-					)); ?>
-				</section><!-- #app -->
-				<section id="components">
-					<h2>Components</h2>
-					<?php foreach ($components as $id => $component): ?>
-						<section id="components-<?= $id ?>">
-							<h3>
-								<?= $id ?>
-								<span class="class">(<?= $component['class'] ?>)</span>
-							</h3>
-							<?php $this->renderPartial('_vardump', array(
-								'data' => $component,
-								'depth' => 5,
-								'highlightCode' => $highlight,
-							)); ?>
-						</section>
-					<?php endforeach; ?>
-				</section><!-- #components -->
-				<section id="modules">
-					<h2>Modules</h2>
-					<?php foreach ($modules as $id => $module): ?>
-						<section id="modules-<?= $id ?>">
-							<h3><?= $id ?></h3>
-							<?php $this->renderPartial('_vardump', array(
-								'data' => $module,
-								'depth' => 5,
-								'highlightCode' => $highlight,
-							)); ?>
-						</section>
-					<?php endforeach; ?>
-				</section><!-- #modules -->
-				<section id="params">
-					<h2>Params</h2>
-					<?php $this->renderPartial('_vardump', array(
-						'data' => $params,
-						'depth' => 10,
-						'highlightCode' => $highlight,
-					)); ?>
-				</section><!-- #params -->
+
+				<?php if (is_array($app)): ?>
+					<section id="app">
+						<h2>Application</h2>
+						<?php $this->renderPartial('_vardump', array(
+							'data' => $app,
+							'depth' => 10,
+							'highlightCode' => $highlight,
+						)); ?>
+					</section><!-- #app -->
+				<?php endif; ?>
+
+				<?php if (is_array($components)): ?>
+					<section id="components">
+						<h2>Components</h2>
+						<?php foreach ($components as $id => $component): ?>
+							<?php if (is_array($component)): ?>
+								<section id="components-<?= $id ?>">
+									<h3>
+										<?= $id ?>
+										<span class="class">(<?= $component['class'] ?>)</span>
+									</h3>
+									<?php $this->renderPartial('_vardump', array(
+										'data' => $component,
+										'depth' => 5,
+										'highlightCode' => $highlight,
+									)); ?>
+								</section>
+							<?php endif; ?>
+						<?php endforeach; ?>
+					</section><!-- #components -->
+				<?php endif; ?>
+
+				<?php if (is_array($modules)): ?>
+					<section id="modules">
+						<h2>Modules</h2>
+						<?php foreach ($modules as $id => $module): ?>
+							<?php if (is_array($module)): ?>
+								<section id="modules-<?= $id ?>">
+									<h3><?= $id ?></h3>
+									<?php $this->renderPartial('_vardump', array(
+										'data' => $module,
+										'depth' => 5,
+										'highlightCode' => $highlight,
+									)); ?>
+								</section>
+							<?php endif; ?>
+						<?php endforeach; ?>
+					</section><!-- #modules -->
+				<?php endif; ?>
+
+				<?php if (is_array($params)): ?>
+					<section id="params">
+						<h2>Params</h2>
+						<?php $this->renderPartial('_vardump', array(
+							'data' => $params,
+							'depth' => 10,
+							'highlightCode' => $highlight,
+						)); ?>
+					</section><!-- #params -->
+				<?php endif; ?>
+
 			</div><!-- .span12 -->
 		</div>
 	</div>
