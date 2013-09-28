@@ -129,9 +129,13 @@
 	<div id="connections" class="tab-pane">
 		<?php
 		foreach ($connections as $id => $info) {
-			$caption = 'Component: '
-				. CHtml::link($id, array('config', '#' => 'components-' . $id))
-				. ' (' . $info['class'] . ')';
+			$caption = 'Component: ';
+			if ($this->component->showConfig) {
+				$caption .= CHtml::link($id, array('config', '#' => 'components-' . $id));
+			} else {
+				$caption .= $id;
+			}
+			$caption .= ' (' . $info['class'] . ')';
 			unset($info['class']);
 			echo $this->render(dirname(__FILE__) . '/_detail.php', array(
 				'caption' => $caption,

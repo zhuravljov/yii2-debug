@@ -157,6 +157,9 @@ class DefaultController extends CController
 
 	public function actionConfig()
 	{
+		if (!$this->getComponent()->showConfig) {
+			throw new CHttpException(403, 'Forbidden');
+		}
 		$this->render('config', array(
 			'app' => $this->prepareData(get_object_vars(Yii::app())),
 			'components' => $this->prepareData(Yii::app()->components),

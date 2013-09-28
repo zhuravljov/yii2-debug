@@ -40,6 +40,10 @@ class Yii2Debug extends CApplicationComponent
 	 */
 	public $moduleId = 'debug';
 	/**
+	 * @var bool показывать или нет страницу с конфигурацией приложения
+	 */
+	public $showConfig = false;
+	/**
 	 * @var bool использование внутренних url-правил
 	 */
 	public $internalUrls = true;
