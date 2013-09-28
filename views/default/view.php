@@ -18,7 +18,7 @@ $this->pageTitle = 'Yii Debugger';
 					Yii Debugger
 				</div>
 				<?php foreach ($panels as $panel): ?>
-					<?php echo $panel->getSummary(); ?>
+					<?= $panel->getSummary() ?>
 				<?php endforeach; ?>
 			</div>
 		</div>
@@ -39,7 +39,7 @@ $this->pageTitle = 'Yii Debugger';
 			<div class="span10">
 				<div class="callout alert alert-info">
 					<div class="btn-group">
-						<?php echo CHtml::link('All', array('index'), array('class' => 'btn')); ?>
+						<?= CHtml::link('All', array('index'), array('class' => 'btn')) ?>
 						<button class="btn dropdown-toggle" data-toggle="dropdown">
 							Last 10
 							<span class="caret"></span>
@@ -68,13 +68,13 @@ $this->pageTitle = 'Yii Debugger';
 							?>
 						</ul>
 					</div>
-					<?php echo $summary['method']; ?>
-					<?php echo CHtml::link(CHtml::encode($summary['url']), $summary['url']); ?>
-					<?php echo $summary['ajax'] ? ' (AJAX)' : ''; ?>
-					at <?php echo date('Y-m-d h:i:s', $summary['time']); ?>
-					by <?php echo $summary['ip']; ?>
+					<?= $summary['method'] ?>
+					<?= CHtml::link(CHtml::encode($summary['url']), $summary['url']) ?>
+					<?= $summary['ajax'] ? ' (AJAX)' : '' ?>
+					at <?= date('Y-m-d h:i:s', $summary['time']) ?>
+					by <?= $summary['ip'] ?>
 				</div>
-				<?php echo $activePanel->getDetail(); ?>
+				<?= $activePanel->getDetail() ?>
 			</div>
 		</div>
 	</div>

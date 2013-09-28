@@ -33,11 +33,11 @@ $this->pageTitle = 'Yii Debugger';
 				<tbody>
 				<?php foreach ($manifest as $tag => $data): ?>
 					<tr>
-						<td><?php echo CHtml::link(date('Y-m-d h:i:s', $data['time']), array('view', 'tag' => $tag)); ?></td>
-						<td><?php echo $data['ip']; ?></td>
-						<td><?php echo $data['method']; ?></td>
-						<td><?php echo isset($data['code']) ? $data['code'] : ''; ?></td>
-						<td style="word-break:break-all;"><?php echo $data['url']; ?></td>
+						<td><?= CHtml::link(date('Y-m-d h:i:s', $data['time']), array('view', 'tag' => $tag)) ?></td>
+						<td><?= $data['ip'] ?></td>
+						<td><?= $data['method'] ?></td>
+						<td><?= isset($data['code']) ? $data['code'] : '' ?></td>
+						<td style="word-break:break-all;"><?= $data['url'] ?></td>
 					</tr>
 				<?php endforeach; ?>
 				</tbody>

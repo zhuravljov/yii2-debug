@@ -21,7 +21,7 @@ $this->pageTitle = 'Yii Debugger';
 					Yii Debugger
 				</div>
 				<?php foreach ($panels as $panel): ?>
-					<?php echo $panel->getSummary(); ?>
+					<?= $panel->getSummary() ?>
 				<?php endforeach; ?>
 			</div>
 		</div>
