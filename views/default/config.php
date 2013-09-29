@@ -34,7 +34,7 @@ $highlight = $this->getComponent()->highlightCode;
 								<ul class="sub-nav">
 									<?php foreach ($components as $id => $component): ?>
 										<?php if (is_array($component)): ?>
-											<li><a href="#components-<?= $id ?>"><?= $id ?></a></li>
+											<li><a href="#components-<?= $id ?>" class="<?= isset($component['_error_']) ? 'error' : '' ?>"><?= $id ?></a></li>
 										<?php endif; ?>
 									<?php endforeach; ?>
 								</ul>
@@ -81,6 +81,13 @@ $highlight = $this->getComponent()->highlightCode;
 										<?= $id ?>
 										<span class="class">(<?= $component['class'] ?>)</span>
 									</h3>
+									<?php if (isset($component['_error_'])): ?>
+										<div class="alert alert-error">
+											<strong>Error!</strong>
+											<?= $component['_error_'] ?>
+										</div>
+										<?php unset($component['_error_']); ?>
+									<?php endif; ?>
 									<?php $this->renderPartial('_vardump', array(
 										'data' => $component,
 										'depth' => 5,
@@ -163,13 +170,24 @@ $cs->registerCss(__CLASS__ . '#config', <<<CSS
 		border-radius: 4px;
 		text-decoration: none;
 	}
-	ul.sub-nav li a:hover, ul.sub-nav li a:focus {
+	ul.sub-nav li a.error {
+		color: red;
+	}
+	ul.sub-nav li a:hover,
+	ul.sub-nav li a:focus {
 		text-decoration: none;
 		background-color: #eeeeee;
 	}
-	ul.sub-nav li.active a, ul.sub-nav li.active a:hover, ul.sub-nav li.active a:focus {
+	ul.sub-nav li.active a,
+	ul.sub-nav li.active a:hover,
+	ul.sub-nav li.active a:focus {
 		background-color: #0088cc;
 		color: #fff;
+	}
+	ul.sub-nav li.active a.error,
+	ul.sub-nav li.active a.error:hover,
+	ul.sub-nav li.active a.error:focus {
+		background-color: #bd362f;
 	}
 	.well code {
 		background-color: inherit;

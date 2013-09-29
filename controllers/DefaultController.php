@@ -161,8 +161,15 @@ class DefaultController extends CController
 			throw new CHttpException(403, 'Forbidden');
 		}
 		$components = array();
-		foreach (array_keys(Yii::app()->getComponents(false)) as $id) {
-			$components[$id] = Yii::app()->getComponent($id);
+		foreach (Yii::app()->getComponents(false) as $id => $config) {
+			try {
+				$components[$id] = Yii::app()->getComponent($id);
+			} catch (Exception $e) {
+				assert(is_array($config));
+				$components[$id] = array_merge($config, array(
+					'_error_' => $e->getMessage(),
+				));
+			}
 		}
 		$data = $this->hideConfigData(
 			array(
