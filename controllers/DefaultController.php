@@ -171,11 +171,14 @@ class DefaultController extends CController
 				));
 			}
 		}
+		ksort($components);
+		$modules = Yii::app()->modules;
+		ksort($modules);
 		$data = $this->hideConfigData(
 			array(
 				'app' => $this->prepareData(get_object_vars(Yii::app())),
 				'components' => $this->prepareData($components),
-				'modules' => $this->prepareData(Yii::app()->modules),
+				'modules' => $this->prepareData($modules),
 				'params' => $this->prepareData(Yii::app()->params),
 			),
 			$this->getComponent()->hiddenConfigOptions
