@@ -160,10 +160,14 @@ class DefaultController extends CController
 		if (!$this->getComponent()->showConfig) {
 			throw new CHttpException(403, 'Forbidden');
 		}
+		$components = array();
+		foreach (array_keys(Yii::app()->getComponents(false)) as $id) {
+			$components[$id] = Yii::app()->getComponent($id);
+		}
 		$data = $this->hideConfigData(
 			array(
 				'app' => $this->prepareData(get_object_vars(Yii::app())),
-				'components' => $this->prepareData(Yii::app()->components),
+				'components' => $this->prepareData($components),
 				'modules' => $this->prepareData(Yii::app()->modules),
 				'params' => $this->prepareData(Yii::app()->params),
 			),
