@@ -11,7 +11,7 @@
  * @var array $explainRows
  */
 
-$this->pageTitle = 'Yii Debugger';
+$this->pageTitle = 'Explain Query - Yii Debugger';
 ?>
 <div class="default-view">
 	<div class="navbar">

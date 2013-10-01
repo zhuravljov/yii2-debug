@@ -7,7 +7,7 @@
  * @var array $params
  */
 
-$this->pageTitle = 'Configuration - Yii Debugger';
+$this->pageTitle = 'Full Configuration - Yii Debugger';
 $highlight = $this->getComponent()->highlightCode;
 ?>
 <div class="default-view">

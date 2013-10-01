@@ -8,7 +8,7 @@
  * @var Yii2DebugPanel $activePanel
  */
 
-$this->pageTitle = 'Yii Debugger';
+$this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 ?>
 <div class="default-view">
 	<div class="navbar">

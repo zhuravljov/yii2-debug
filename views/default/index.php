@@ -4,7 +4,7 @@
  * @var array $manifest
  */
 
-$this->pageTitle = 'Yii Debugger';
+$this->pageTitle = 'Available Debug Data - Yii Debugger';
 ?>
 <div class="default-index">
 	<div class="navbar">
