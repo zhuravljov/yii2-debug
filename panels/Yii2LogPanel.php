@@ -48,6 +48,11 @@ class Yii2LogPanel extends Yii2DebugPanel
 					);
 				} elseif (($lines = explode("\nin ", $message)) !== false) {
 					$message = array_shift($lines);
+					$base = dirname(Yii::app()->getBasePath()) . DIRECTORY_SEPARATOR;
+					foreach ($lines as &$line) {
+						$line = str_replace($base, '', $line);
+					}
+					unset($line);
 					$traces = $lines;
 				}
 			}
