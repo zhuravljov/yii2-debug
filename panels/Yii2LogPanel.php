@@ -7,6 +7,8 @@
  */
 class Yii2LogPanel extends Yii2DebugPanel
 {
+	const CATEGORY_DUMP = 'Yii2Debug.dump';
+
 	public function getName()
 	{
 		return 'Logs';
@@ -16,15 +18,18 @@ class Yii2LogPanel extends Yii2DebugPanel
 	{
 		$errorCount = 0;
 		$warningCount = 0;
+		$infoCount = 0;
 		foreach ($this->data['messages'] as $log) {
 			$level = $log[1];
 			if ($level == CLogger::LEVEL_ERROR) $errorCount++;
 			elseif ($level == CLogger::LEVEL_WARNING) $warningCount++;
+			elseif ($level == CLogger::LEVEL_INFO) $infoCount++;
 		}
 		return $this->render(dirname(__FILE__) . '/../views/panels/log_bar.php', array(
 			'count' => count($this->data['messages']),
 			'errorCount' => $errorCount,
 			'warningCount' => $warningCount,
+			'infoCount' => $infoCount,
 		));
 	}
 

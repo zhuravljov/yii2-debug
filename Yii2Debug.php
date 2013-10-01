@@ -293,4 +293,13 @@ JS
 		}
 		return false;
 	}
+
+	/**
+	 * Дамп переменной
+	 * @param mixed $data
+	 */
+	public static function dump($data)
+	{
+		Yii::log(serialize($data), CLogger::LEVEL_INFO, Yii2LogPanel::CATEGORY_DUMP);
+	}
 }

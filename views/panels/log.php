@@ -24,6 +24,10 @@
 				$firstWarning = !isset($firstWarning);
 				if ($firstWarning) $rowOpt = 'id="first-warning"';
 				break;
+			case CLogger::LEVEL_INFO:
+				$firstInfo = !isset($firstInfo);
+				if ($firstInfo) $rowOpt = 'id="first-info"';
+				break;
 		}
 		switch ($level) {
 			case CLogger::LEVEL_ERROR: $class = 'error'; break;
@@ -38,7 +42,13 @@
 			<td style="width:250px"><?= $category ?></td>
 			<td>
 				<div style="overflow:auto">
-					<?= nl2br(CHtml::encode($message)) ?>
+					<?php if ($category != Yii2LogPanel::CATEGORY_DUMP): ?>
+						<?= nl2br(CHtml::encode($message)) ?>
+					<?php else: ?>
+						<div class="src <?= $this->highlightCode ? 'hl' : 'no-hl' ?>"><?php
+							CVarDumper::dump(@unserialize($message), 10, $this->highlightCode);
+						?></div>
+					<?php endif; ?>
 					<?php if (!empty($traces)): ?>
 						<ul class="trace">
 						<?php foreach ($traces as $trace): ?>

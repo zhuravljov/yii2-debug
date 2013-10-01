@@ -8,7 +8,7 @@
  */
 
 $this->pageTitle = 'Full Configuration - Yii Debugger';
-$highlight = $this->getComponent()->highlightCode;
+$hl = $this->getComponent()->highlightCode;
 ?>
 <div class="default-view">
 	<div class="navbar">
@@ -63,11 +63,9 @@ $highlight = $this->getComponent()->highlightCode;
 				<?php if (is_array($app)): ?>
 					<section id="app">
 						<h2>Application</h2>
-						<?php $this->renderPartial('_vardump', array(
-							'data' => $app,
-							'depth' => 10,
-							'highlightCode' => $highlight,
-						)); ?>
+						<div class="well well-small src <?= $hl ? 'hl' : 'no-hl' ?>"><?php
+							CVarDumper::dump($app, 10, $hl);
+						?></div>
 					</section><!-- #app -->
 				<?php endif; ?>
 
@@ -79,7 +77,7 @@ $highlight = $this->getComponent()->highlightCode;
 								<section id="components-<?= $id ?>">
 									<h3>
 										<?= $id ?>
-										<span class="class">(<?= $component['class'] ?>)</span>
+										<span class="class-name">(<?= $component['class'] ?>)</span>
 									</h3>
 									<?php if (isset($component['_error_'])): ?>
 										<div class="alert alert-error">
@@ -88,11 +86,9 @@ $highlight = $this->getComponent()->highlightCode;
 										</div>
 										<?php unset($component['_error_']); ?>
 									<?php endif; ?>
-									<?php $this->renderPartial('_vardump', array(
-										'data' => $component,
-										'depth' => 5,
-										'highlightCode' => $highlight,
-									)); ?>
+									<div class="well well-small src <?= $hl ? 'hl' : 'no-hl' ?>"><?php
+										CVarDumper::dump($component, 5, $hl);
+									?></div>
 								</section>
 							<?php endif; ?>
 						<?php endforeach; ?>
@@ -106,11 +102,9 @@ $highlight = $this->getComponent()->highlightCode;
 							<?php if (is_array($module)): ?>
 								<section id="modules-<?= $id ?>">
 									<h3><?= $id ?></h3>
-									<?php $this->renderPartial('_vardump', array(
-										'data' => $module,
-										'depth' => 5,
-										'highlightCode' => $highlight,
-									)); ?>
+									<div class="well well-small src <?= $hl ? 'hl' : 'no-hl' ?>"><?php
+										CVarDumper::dump($module, 5, $hl);
+									?></div>
 								</section>
 							<?php endif; ?>
 						<?php endforeach; ?>
@@ -120,11 +114,9 @@ $highlight = $this->getComponent()->highlightCode;
 				<?php if (is_array($params)): ?>
 					<section id="params">
 						<h2>Params</h2>
-						<?php $this->renderPartial('_vardump', array(
-							'data' => $params,
-							'depth' => 10,
-							'highlightCode' => $highlight,
-						)); ?>
+						<div class="well well-small src <?= $hl ? 'hl' : 'no-hl' ?>"><?php
+							CVarDumper::dump($params, 10, $hl);
+						?></div>
 					</section><!-- #params -->
 				<?php endif; ?>
 
@@ -189,11 +181,7 @@ $cs->registerCss(__CLASS__ . '#config', <<<CSS
 	ul.sub-nav li.active a.error:focus {
 		background-color: #bd362f;
 	}
-	.well code {
-		background-color: inherit;
-		border-width: 0;
-	}
-	#components .class {
+	#components .class-name {
 		color: gray;
 	}
 CSS

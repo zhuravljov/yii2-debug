@@ -165,3 +165,13 @@ div.explain:after {
 	-moz-border-radius: 0 0 4px 0;
 	border-radius: 0 0 4px 0;
 }
+
+.src code {
+	background-color: inherit;
+	border-width: 0;
+}
+.src.no-hl {
+	white-space: pre;
+	font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+	font-size: 13px;
+}
