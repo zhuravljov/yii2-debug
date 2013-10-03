@@ -20,19 +20,13 @@ class Yii2DebugModule extends CWebModule
 		) {
 			// Отключение дебагера на страницах просмотра ранее сохраненных логов
 			Yii::app()->detachEventHandler('onEndRequest', array($this->component, 'onEndRequest'));
+			// Отключение сторонних шаблонизаторов
+			Yii::app()->setComponent('viewRenderer', null);
+			// Сброс скрипта для вывода тулбара
 			Yii::app()->getClientScript()->reset();
 			return true;
 		}
 		else
 			return false;
-	}
-
-	/**
-	 * Блокировака сторонних шаблонизаторов
-	 */
-	public function getComponent($id, $createIfNull = true)
-	{
-		if ($id === 'viewRenderer') return;
-		parent::getComponent($id, $createIfNull);
 	}
 }
