@@ -92,12 +92,12 @@ class Yii2Debug extends CApplicationComponent
 		}
 		$this->panels = $panels;
 
-		Yii::app()->setModules(array_merge(Yii::app()->getModules(), array(
+		Yii::app()->setModules(array(
 			$this->moduleId => array(
 				'class' => 'Yii2DebugModule',
 				'component' => $this,
 			),
-		)));
+		));
 
 		if ($this->internalUrls && (Yii::app()->getUrlManager()->urlFormat == 'path')) {
 			$rules = array();
