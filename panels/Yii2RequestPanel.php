@@ -120,4 +120,21 @@ class Yii2RequestPanel extends Yii2DebugPanel
 			$this->_statusCode = 500;
 		}
 	}
+
+	/**
+	 * @param int $statusCode
+	 * @return string html
+	 */
+	public static function getStatusCodeHtml($statusCode)
+	{
+		$type = 'important';
+		if ($statusCode >= 100 && $statusCode < 200) {
+			$type = 'info';
+		} elseif ($statusCode >= 200 && $statusCode < 300) {
+			$type = 'success';
+		} elseif ($statusCode >= 300 && $statusCode < 400) {
+			$type = 'warning';
+		}
+		return CHtml::tag('span', array('class' => 'label label-' . $type), $statusCode);
+	}
 }

@@ -4,14 +4,7 @@
 <?php if ($statusCode = $this->data['statusCode']): ?>
 	<div class="yii2-debug-toolbar-block">
 		<a href="<?= $this->getUrl() ?>" title="Status code: <?= $statusCode ?>">
-			Status
-			<?php if ($statusCode >= 200 && $statusCode < 300): ?>
-				<span class="label label-success"><?= $statusCode ?></span>
-			<?php elseif ($statusCode >= 100 && $statusCode < 200): ?>
-				<span class="label label-info"><?= $statusCode ?></span>
-			<?php else: ?>
-				<span class="label label-important"><?= $statusCode ?></span>
-			<?php endif; ?>
+			Status <?= Yii2RequestPanel::getStatusCodeHtml($statusCode) ?>
 		</a>
 	</div>
 <?php endif; ?>
