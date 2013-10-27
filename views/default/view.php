@@ -77,7 +77,7 @@ $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 						)
 					) ?>
 					<?= $summary['method'] ?>
-					<?= CHtml::link(CHtml::encode($summary['url']), $summary['url']) ?>
+					<?= CHtml::link(CHtml::encode(urldecode($summary['url'])), $summary['url']) ?>
 					<?= $summary['ajax'] ? ' (AJAX)' : '' ?>
 					at <?= date('Y-m-d h:i:s', $summary['time']) ?>
 					by <?= $summary['ip'] ?>

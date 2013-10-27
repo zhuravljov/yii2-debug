@@ -45,7 +45,9 @@ $this->pageTitle = 'Available Debug Data - Yii Debugger';
 						<td><?= $data['ip'] ?></td>
 						<td><?= $data['method'] ?></td>
 						<td><?= isset($data['code']) ? Yii2RequestPanel::getStatusCodeHtml($data['code']) : '' ?></td>
-						<td style="word-break:break-all;"><?= $data['url'] ?></td>
+						<td style="word-break:break-all;">
+							<?= CHtml::link(CHtml::encode(urldecode($data['url'])), $data['url']) ?>
+						</td>
 					</tr>
 				<?php endforeach; ?>
 				</tbody>
