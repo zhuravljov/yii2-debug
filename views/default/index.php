@@ -38,15 +38,20 @@ $this->pageTitle = 'Available Debug Data - Yii Debugger';
 							<?= CHtml::link(
 								'<i class="icon-star' . (!$this->getComponent()->getLock($tag) ? '-empty' : '') . '"></i>',
 								array('lock', 'tag' => $tag),
-								array('class' => 'lock' . ($this->getComponent()->getLock($tag) ? ' active' : ''))
+								array(
+									'class' => 'lock' . ($this->getComponent()->getLock($tag) ? ' active' : ''),
+									'title' => 'Lock or unlock of deleting',
+								)
 							) ?>
 						</td>
 						<td><?= CHtml::link(date('Y-m-d h:i:s', $data['time']), array('view', 'tag' => $tag)) ?></td>
 						<td><?= $data['ip'] ?></td>
 						<td><?= $data['method'] ?></td>
-						<td><?= isset($data['code']) ? Yii2RequestPanel::getStatusCodeHtml($data['code']) : '' ?></td>
+						<td style="text-align:center;"><?= isset($data['code']) ? Yii2RequestPanel::getStatusCodeHtml($data['code']) : '' ?></td>
 						<td style="word-break:break-all;">
-							<?= CHtml::link(CHtml::encode(urldecode($data['url'])), $data['url']) ?>
+							<!--<?= CHtml::link(CHtml::encode(urldecode($data['url'])), $data['url']) ?>-->
+							<?= CHtml::encode(urldecode($data['url'])) ?>
+							<?= CHtml::link('<i class="icon-share"></i>', $data['url'], array('class' => 'share', 'target' => 'blank')) ?>
 						</td>
 					</tr>
 				<?php endforeach; ?>
@@ -56,8 +61,8 @@ $this->pageTitle = 'Available Debug Data - Yii Debugger';
 	</div>
 </div>
 <?php
-Yii::app()->clientScript->registerScript(__CLASS__ . '#view', <<<JS
-	$('a.lock').click(function(e){
+Yii::app()->clientScript->registerScript(__CLASS__ . '#index', <<<JS
+	$('a.lock').tooltip().click(function(e){
 		e.preventDefault();
 		var el = $(this);
 		$.get(el.attr('href'), function(data){
@@ -73,6 +78,9 @@ JS
 Yii::app()->clientScript->registerCss(__CLASS__ . '#view', <<<CSS
 	a.lock {opacity: 0.5;}
 	a.lock.active, a.lock:hover {opacity: 1;}
+	a.share {display:none}
+	td:hover a.share {display:inline;opacity:0.7;}
+	td:hover a.share:hover {opacity:1;}
 CSS
 );
 ?>

@@ -14,19 +14,7 @@
 $this->pageTitle = 'Explain Query - Yii Debugger';
 ?>
 <div class="default-view">
-	<div class="navbar">
-		<div class="navbar-inner">
-			<div class="container">
-				<div class="yii2-debug-toolbar-block title">
-					Yii Debugger
-				</div>
-				<?php foreach ($panels as $panel): ?>
-					<?= $panel->getSummary() ?>
-				<?php endforeach; ?>
-			</div>
-		</div>
-	</div>
-
+	<?php $this->renderPartial('_toolbar', array('panels' => $panels)); ?>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span12">

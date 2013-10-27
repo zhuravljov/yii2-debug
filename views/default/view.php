@@ -11,19 +11,7 @@
 $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 ?>
 <div class="default-view">
-	<div class="navbar">
-		<div class="navbar-inner">
-			<div class="container">
-				<div class="yii2-debug-toolbar-block title">
-					Yii Debugger
-				</div>
-				<?php foreach ($panels as $panel): ?>
-					<?= $panel->getSummary() ?>
-				<?php endforeach; ?>
-			</div>
-		</div>
-	</div>
-
+	<?php $this->renderPartial('_toolbar', array('panels' => $panels)); ?>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span2">
@@ -48,7 +36,7 @@ $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 							<?php
 							$count = 0;
 							foreach ($manifest as $meta) {
-								$label = $meta['method'] . ' ' . $meta['url'] . ($meta['ajax'] ? ' (AJAX)' : '')
+								$label = $meta['method'] . ' ' . urldecode($meta['url']) . ($meta['ajax'] ? ' (AJAX)' : '')
 									. ', ' . date('Y-m-d h:i:s', $meta['time'])
 									. ', ' . $meta['ip'];
 								$url = array('view', 'tag' => $meta['tag'], 'panel' => $activePanel->id);
@@ -73,7 +61,8 @@ $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 						array('lock', 'tag' => $tag),
 						array(
 							'class' => 'lock btn' . ($this->getComponent()->getLock($tag) ? ' active' : ''),
-							'data-toggle' => 'button'
+							'data-toggle' => 'button',
+							'title' => 'Lock or unlock of deleting',
 						)
 					) ?>
 					<?= $summary['method'] ?>
@@ -89,7 +78,7 @@ $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 </div>
 <?php
 Yii::app()->clientScript->registerScript(__CLASS__ . '#view', <<<JS
-	$('a.lock').click(function(e){
+	$('a.lock').tooltip().click(function(e){
 		e.preventDefault();
 		var el = $(this);
 		$.get(el.attr('href'), function(data){
