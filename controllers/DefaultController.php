@@ -55,6 +55,17 @@ class DefaultController extends CController
 	}
 
 	/**
+	 * Блокировка/разблокировка лога от автоматического удаления
+	 * @param string $tag
+	 */
+	public function actionLock($tag)
+	{
+		$lock = $this->getComponent()->getLock($tag);
+		$this->getComponent()->setLock($tag, !$lock);
+		echo !$lock;
+	}
+
+	/**
 	 * @param string $tag
 	 * @param int $num
 	 * @param string $connection
@@ -81,6 +92,7 @@ class DefaultController extends CController
 		$db = Yii::app()->getComponent($connection);
 
 		if (!Yii::app()->request->isAjaxRequest) {
+			$this->getComponent()->setLock($tag, true);
 			$this->render('explain', array(
 				'tag' => $tag,
 				'summary' => $this->summary,

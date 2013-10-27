@@ -257,13 +257,20 @@ JS
 	 */
 	protected function resizeHistory(&$manifest)
 	{
-		if (count($manifest) > $this->historySize + 10) {
+		$tags = array_keys($manifest);
+		$count = 0;
+		foreach ($tags as $tag) {
+			if (!$this->getLock($tag)) $count++;
+		}
+		if ($count > $this->historySize + 10) {
 			$path = $this->logPath;
-			$n = count($manifest) - $this->historySize;
-			foreach (array_keys($manifest) as $tag) {
-				@unlink("$path/$tag.json");
-				unset($manifest[$tag]);
-				if (--$n <= 0) break;
+			$n = $count - $this->historySize;
+			foreach ($tags as $tag) {
+				if (!$this->getLock($tag)) {
+					@unlink("$path/$tag.json");
+					unset($manifest[$tag]);
+					if (--$n <= 0) break;
+				}
 			}
 		}
 	}
@@ -301,5 +308,45 @@ JS
 	public static function dump($data)
 	{
 		Yii::log(serialize($data), CLogger::LEVEL_INFO, Yii2LogPanel::CATEGORY_DUMP);
+	}
+
+	/**
+	 * @var
+	 */
+	private $_locks;
+
+	/**
+	 * @param string $tag
+	 * @return bool
+	 */
+	public function getLock($tag)
+	{
+		if ($this->_locks === null) {
+			$locksFile = $this->logPath . '/locks.json';
+			if (is_file($locksFile)) {
+				$this->_locks = array_flip(json_decode(file_get_contents($locksFile), true));
+			} else {
+				$this->_locks = array();
+			}
+		}
+		return isset($this->_locks[$tag]);
+	}
+
+	/**
+	 * @param string $tag
+	 * @param bool $value
+	 */
+	public function setLock($tag, $value)
+	{
+		$value = !!$value;
+		if ($this->getLock($tag) !== $value) {
+			if ($value) {
+				$this->_locks[$tag] = true;
+			} else {
+				unset($this->_locks[$tag]);
+			}
+			$locksFile = $this->logPath . '/locks.json';
+			file_put_contents($locksFile, json_encode(array_keys($this->_locks)));
+		}
 	}
 }

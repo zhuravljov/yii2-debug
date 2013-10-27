@@ -68,6 +68,14 @@ $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 							?>
 						</ul>
 					</div>
+					<?= CHtml::link(
+						'<i class="icon-star' . (!$this->getComponent()->getLock($tag) ? '-empty' : '') . '"></i>',
+						array('lock', 'tag' => $tag),
+						array(
+							'class' => 'lock btn' . ($this->getComponent()->getLock($tag) ? ' active' : ''),
+							'data-toggle' => 'button'
+						)
+					) ?>
 					<?= $summary['method'] ?>
 					<?= CHtml::link(CHtml::encode($summary['url']), $summary['url']) ?>
 					<?= $summary['ajax'] ? ' (AJAX)' : '' ?>
@@ -79,3 +87,19 @@ $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 		</div>
 	</div>
 </div>
+<?php
+Yii::app()->clientScript->registerScript(__CLASS__ . '#view', <<<JS
+	$('a.lock').click(function(e){
+		e.preventDefault();
+		var el = $(this);
+		$.get(el.attr('href'), function(data){
+			if (data) {
+				$(el).addClass('active').children('i').addClass('icon-star').removeClass('icon-star-empty');
+			} else {
+				$(el).removeClass('active').children('i').addClass('icon-star-empty').removeClass('icon-star');
+			}
+		});
+	});
+JS
+);
+?>
