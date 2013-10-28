@@ -27,7 +27,7 @@ $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 			<div class="span10">
 				<div class="callout alert alert-info">
 					<div class="btn-group">
-						<?= CHtml::link('All', array('index'), array('class' => 'btn')) ?>
+						<?php echo CHtml::link('All', array('index'), array('class' => 'btn')); ?>
 						<button class="btn dropdown-toggle" data-toggle="dropdown">
 							Last 10
 							<span class="caret"></span>
@@ -56,7 +56,7 @@ $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 							?>
 						</ul>
 					</div>
-					<?= CHtml::link(
+					<?php echo CHtml::link(
 						'<i class="icon-star' . (!$this->owner->getLock($tag) ? '-empty' : '') . '"></i>',
 						array('lock', 'tag' => $tag),
 						array(
@@ -64,14 +64,14 @@ $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 							'data-toggle' => 'button',
 							'title' => 'Lock or unlock of deleting',
 						)
-					) ?>
-					<?= $summary['method'] ?>
-					<?= CHtml::link(CHtml::encode(urldecode($summary['url'])), $summary['url']) ?>
-					<?= $summary['ajax'] ? ' (AJAX)' : '' ?>
-					at <?= date('Y-m-d h:i:s', $summary['time']) ?>
-					by <?= $summary['ip'] ?>
+					); ?>
+					<?php echo $summary['method']; ?>
+					<?php echo CHtml::link(CHtml::encode(urldecode($summary['url'])), $summary['url']); ?>
+					<?php echo $summary['ajax'] ? ' (AJAX)' : ''; ?>
+					at <?php echo date('Y-m-d h:i:s', $summary['time']); ?>
+					by <?php echo $summary['ip']; ?>
 				</div>
-				<?= $activePanel->getDetail() ?>
+				<?php echo $activePanel->getDetail(); ?>
 			</div>
 		</div>
 	</div>

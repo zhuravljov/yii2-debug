@@ -34,7 +34,7 @@ $hl = $this->owner->highlightCode;
 								<ul class="sub-nav">
 									<?php foreach ($components as $id => $component): ?>
 										<?php if (is_array($component)): ?>
-											<li><a href="#components-<?= $id ?>" class="<?= isset($component['_error_']) ? 'error' : '' ?>"><?= $id ?></a></li>
+											<li><a href="#components-<?php echo $id; ?>" class="<?php echo isset($component['_error_']) ? 'error' : ''; ?>"><?php echo $id; ?></a></li>
 										<?php endif; ?>
 									<?php endforeach; ?>
 								</ul>
@@ -45,7 +45,7 @@ $hl = $this->owner->highlightCode;
 								<ul class="sub-nav">
 									<?php foreach ($modules as $id => $module): ?>
 										<?php if (is_array($module)): ?>
-											<li><a href="#modules-<?= $id ?>"><?= $id ?></a></li>
+											<li><a href="#modules-<?php echo $id; ?>"><?php echo $id; ?></a></li>
 										<?php endif; ?>
 									<?php endforeach; ?>
 								</ul>
@@ -63,7 +63,7 @@ $hl = $this->owner->highlightCode;
 				<?php if (is_array($app)): ?>
 					<section id="app">
 						<h2>Application</h2>
-						<div class="well well-small src <?= $hl ? 'hl' : 'no-hl' ?>"><?php
+						<div class="well well-small src <?php echo $hl ? 'hl' : 'no-hl'; ?>"><?php
 							CVarDumper::dump($app, 10, $hl);
 						?></div>
 					</section><!-- #app -->
@@ -74,19 +74,19 @@ $hl = $this->owner->highlightCode;
 						<h2>Components</h2>
 						<?php foreach ($components as $id => $component): ?>
 							<?php if (is_array($component)): ?>
-								<section id="components-<?= $id ?>">
+								<section id="components-<?php echo $id; ?>">
 									<h3>
-										<?= $id ?>
-										<span class="class-name">(<?= $component['class'] ?>)</span>
+										<?php echo $id; ?>
+										<span class="class-name">(<?php echo $component['class']; ?>)</span>
 									</h3>
 									<?php if (isset($component['_error_'])): ?>
 										<div class="alert alert-error">
 											<strong>Error!</strong>
-											<?= $component['_error_'] ?>
+											<?php echo $component['_error_']; ?>
 										</div>
 										<?php unset($component['_error_']); ?>
 									<?php endif; ?>
-									<div class="well well-small src <?= $hl ? 'hl' : 'no-hl' ?>"><?php
+									<div class="well well-small src <?php echo $hl ? 'hl' : 'no-hl'; ?>"><?php
 										CVarDumper::dump($component, 5, $hl);
 									?></div>
 								</section>
@@ -100,9 +100,9 @@ $hl = $this->owner->highlightCode;
 						<h2>Modules</h2>
 						<?php foreach ($modules as $id => $module): ?>
 							<?php if (is_array($module)): ?>
-								<section id="modules-<?= $id ?>">
-									<h3><?= $id ?></h3>
-									<div class="well well-small src <?= $hl ? 'hl' : 'no-hl' ?>"><?php
+								<section id="modules-<?php echo $id; ?>">
+									<h3><?php echo $id; ?></h3>
+									<div class="well well-small src <?php echo $hl ? 'hl' : 'no-hl'; ?>"><?php
 										CVarDumper::dump($module, 5, $hl);
 									?></div>
 								</section>
@@ -114,7 +114,7 @@ $hl = $this->owner->highlightCode;
 				<?php if (is_array($params)): ?>
 					<section id="params">
 						<h2>Params</h2>
-						<div class="well well-small src <?= $hl ? 'hl' : 'no-hl' ?>"><?php
+						<div class="well well-small src <?php echo $hl ? 'hl' : 'no-hl'; ?>"><?php
 							CVarDumper::dump($params, 10, $hl);
 						?></div>
 					</section><!-- #params -->

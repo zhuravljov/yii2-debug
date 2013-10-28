@@ -10,7 +10,7 @@
 				Yii Debugger
 			</div>
 			<?php foreach ($panels as $panel): ?>
-				<?= $panel->getSummary() ?>
+				<?php echo $panel->getSummary(); ?>
 			<?php endforeach; ?>
 		</div>
 	</div>

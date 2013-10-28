@@ -18,12 +18,9 @@ $this->pageTitle = 'Explain Query - Yii Debugger';
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span12">
-				<h1>Explain Query (<?= $connection->driverName ?>)</h1>
+				<h1>Explain Query (<?php echo $connection->driverName; ?>)</h1>
 				<div class="well">
-					<?= $dbPanel->highlightCode ?
-						$dbPanel->highlightSql($procedure) :
-						CHtml::encode($procedure)
-					?>
+					<?php echo $dbPanel->highlightCode ? $dbPanel->highlightSql($procedure) : CHtml::encode($procedure); ?>
 				</div>
 				<?php $this->renderPartial('_explain', array(
 					'connection' => $connection,

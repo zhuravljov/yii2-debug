@@ -35,23 +35,22 @@ $this->pageTitle = 'Available Debug Data - Yii Debugger';
 				<?php foreach ($manifest as $tag => $data): ?>
 					<tr>
 						<td style="text-align:center;">
-							<?= CHtml::link(
+							<?php echo CHtml::link(
 								'<i class="icon-star' . (!$this->owner->getLock($tag) ? '-empty' : '') . '"></i>',
 								array('lock', 'tag' => $tag),
 								array(
 									'class' => 'lock' . ($this->owner->getLock($tag) ? ' active' : ''),
 									'title' => 'Lock or unlock of deleting',
 								)
-							) ?>
+							); ?>
 						</td>
-						<td><?= CHtml::link(date('Y-m-d h:i:s', $data['time']), array('view', 'tag' => $tag)) ?></td>
-						<td><?= $data['ip'] ?></td>
-						<td><?= $data['method'] ?></td>
-						<td style="text-align:center;"><?= isset($data['code']) ? Yii2RequestPanel::getStatusCodeHtml($data['code']) : '' ?></td>
+						<td><?php echo CHtml::link(date('Y-m-d h:i:s', $data['time']), array('view', 'tag' => $tag)); ?></td>
+						<td><?php echo $data['ip']; ?></td>
+						<td><?php echo $data['method']; ?></td>
+						<td style="text-align:center;"><?php echo isset($data['code']) ? Yii2RequestPanel::getStatusCodeHtml($data['code']) : ''; ?></td>
 						<td style="word-break:break-all;">
-							<!--<?= CHtml::link(CHtml::encode(urldecode($data['url'])), $data['url']) ?>-->
-							<?= CHtml::encode(urldecode($data['url'])) ?>
-							<?= CHtml::link('<i class="icon-share"></i>', $data['url'], array('class' => 'share', 'target' => 'blank')) ?>
+							<?php echo CHtml::encode(urldecode($data['url'])); ?>
+							<?php echo CHtml::link('<i class="icon-share"></i>', $data['url'], array('class' => 'share', 'target' => 'blank')); ?>
 						</td>
 					</tr>
 				<?php endforeach; ?>
