@@ -18,8 +18,7 @@ class Yii2DebugModule extends CWebModule
 			// Отключение дебагера на страницах просмотра ранее сохраненных логов
 			Yii::app()->detachEventHandler('onEndRequest', array($this->owner, 'onEndRequest'));
 			// Отключение сторонних шаблонизаторов
-			Yii::app()->setComponent('viewRenderer', null);
-			Yii::app()->setComponent('viewRenderer', array('enabled' => false));
+			Yii::app()->setComponents(array('viewRenderer' => array('enabled' => false)), false);
 			// Сброс скрипта для вывода тулбара
 			Yii::app()->getClientScript()->reset();
 			return true;
