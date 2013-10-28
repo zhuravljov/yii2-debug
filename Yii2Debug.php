@@ -84,18 +84,15 @@ class Yii2Debug extends CApplicationComponent
 
 		$panels = array();
 		foreach (CMap::mergeArray($this->corePanels(), $this->panels) as $id => $config) {
-			$config['id'] = $id;
-			$config['tag'] = $this->getTag();
-			$config['component'] = $this;
 			if (!isset($config['highlightCode'])) $config['highlightCode'] = $this->highlightCode;
-			$panels[$id] = Yii::createComponent($config);
+			$panels[$id] = Yii::createComponent($config, $this, $id);
 		}
 		$this->panels = $panels;
 
 		Yii::app()->setModules(array(
 			$this->moduleId => array(
 				'class' => 'Yii2DebugModule',
-				'component' => $this,
+				'owner' => $this,
 			),
 		));
 
@@ -220,14 +217,14 @@ JS
 
 		$data = array();
 		foreach ($this->panels as $panel) {
-			$data[$panel->id] = $panel->save();
+			$data[$panel->getId()] = $panel->save();
 			if (isset($panel->filterData)) {
-				$data[$panel->id] = $panel->evaluateExpression(
+				$data[$panel->getId()] = $panel->evaluateExpression(
 					$panel->filterData,
-					array('data' => $data[$panel->id])
+					array('data' => $data[$panel->getId()])
 				);
 			}
-			$panel->load($data[$panel->id]);
+			$panel->load($data[$panel->getId()]);
 		}
 
 		$statusCode = null;
@@ -348,5 +345,41 @@ JS
 			$locksFile = $this->logPath . '/locks.json';
 			file_put_contents($locksFile, json_encode(array_keys($this->_locks)));
 		}
+	}
+
+	/**
+	 * Каскадное преобразование смешанных данных в массив
+	 * @param mixed $data
+	 * @return array
+	 */
+	public static function prepareData($data)
+	{
+		static $parents = array();
+
+		$result = array();
+		if (is_array($data) || $data instanceof CMap) {
+			foreach ($data as $key => $value) {
+				$result[$key] = static::prepareData($value);
+			}
+		} elseif (is_object($data)) {
+			if (!in_array($data, $parents, true)) {
+				array_push($parents, $data);
+				$result['class'] = get_class($data);
+				if ($data instanceof CActiveRecord) {
+					foreach ($data->attributes as $field => $value) {
+						$result[$field] = $value;
+					}
+				}
+				foreach (get_object_vars($data) as $key => $value) {
+					$result[$key] = static::prepareData($value);
+				}
+				array_pop($parents);
+			} else {
+				$result = get_class($data) . '()';
+			}
+		} else {
+			$result = $data;
+		}
+		return $result;
 	}
 }

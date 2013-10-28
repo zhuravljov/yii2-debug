@@ -1,5 +1,6 @@
 <?php
 /* @var Yii2LogPanel $this */
+/* @var array $data */
 ?>
 <table class="table table-condensed table-bordered table-striped table-hover table-filtered" style="table-layout: fixed;">
 	<thead>
@@ -11,7 +12,7 @@
 		</tr>
 	</thead>
 	<tbody>
-	<?php foreach ($this->data['messages'] as $log): ?>
+	<?php foreach ($data['messages'] as $log): ?>
 		<?php
 		list ($message, $level, $category, $time, $traces) = $log;
 		$rowOpt = '';

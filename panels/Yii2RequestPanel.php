@@ -14,12 +14,19 @@ class Yii2RequestPanel extends Yii2DebugPanel
 
 	public function getSummary()
 	{
-		return $this->render(dirname(__FILE__) . '/../views/panels/request_bar.php');
+		$data = $this->getData();
+		return $this->render(dirname(__FILE__) . '/../views/panels/request_bar.php', array(
+			'statusCode' => $data['statusCode'],
+			'route' => $data['route'],
+			'action' => $data['action'],
+		));
 	}
 
 	public function getDetail()
 	{
-		return $this->render(dirname(__FILE__) . '/../views/panels/request.php');
+		return $this->render(dirname(__FILE__) . '/../views/panels/request.php', array(
+			'data' => $this->getData(),
+		));
 	}
 
 	public function save()
@@ -102,8 +109,9 @@ class Yii2RequestPanel extends Yii2DebugPanel
 		}
 	}
 
-	public function __construct()
+	public function __construct($owner, $id)
 	{
+		parent::__construct($owner, $id);
 		if (!function_exists('http_response_code')) {
 			Yii::app()->attachEventHandler('onException', array($this, 'onException'));
 		}

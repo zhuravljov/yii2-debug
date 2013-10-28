@@ -7,25 +7,14 @@
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  * @package Yii2Debug
  * @since 1.1.13
+ *
+ * @property Yii2Debug $owner
+ * @property string $id страницы
+ * @property string $tag метка для просмотра информации
+ * @property string $url
  */
 class Yii2DebugPanel extends CComponent
 {
-	/**
-	 * @var string id страницы
-	 */
-	public $id;
-	/**
-	 * @var string метка для просмотра информации
-	 */
-	public $tag;
-	/**
-	 * @var Yii2Debug
-	 */
-	public $component;
-	/**
-	 * @var array массив отладочных данных
-	 */
-	public $data;
 	/**
 	 * @var bool|null подсветка кода. По умолчанию Yii2Debug::$highlightCode
 	 */
@@ -34,6 +23,22 @@ class Yii2DebugPanel extends CComponent
 	 * @var callback функция для обработки данных панели перед сохранением
 	 */
 	public $filterData;
+	/**
+	 * @var Yii2Debug
+	 */
+	private $_owner;
+	/**
+	 * @var string id страницы
+	 */
+	private $_id;
+	/**
+	 * @var string tag метка для просмотра информации
+	 */
+	private $_tag;
+	/**
+	 * @var array массив отладочных данных
+	 */
+	private $_data;
 
 	/**
 	 * @return string название панели для вывода в меню
@@ -65,12 +70,58 @@ class Yii2DebugPanel extends CComponent
 	 */
 	public function save()
 	{
-		return null;
 	}
 
-	public function load($data)
+	/**
+	 * @param Yii2Debug $owner
+	 * @param string $id
+	 */
+	public function __construct($owner, $id)
 	{
-		$this->data = $data;
+		$this->_owner = $owner;
+		$this->_id = $id;
+		$this->_tag = $owner->getTag();
+	}
+
+	/**
+	 * @return Yii2Debug
+	 */
+	public function getOwner()
+	{
+		return $this->_owner;
+	}
+
+	/**
+	 * @return Yii2Debug
+	 * @deprecated will removed in v1.2
+	 */
+	public function getComponent()
+	{
+		return $this->_owner;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getId()
+	{
+		return $this->_id;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTag()
+	{
+		return $this->_tag;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getData()
+	{
+		return $this->_data;
 	}
 
 	/**
@@ -78,10 +129,20 @@ class Yii2DebugPanel extends CComponent
 	 */
 	public function getUrl()
 	{
-		return Yii::app()->createUrl($this->component->moduleId .  '/default/view', array(
-			'tag' => $this->tag,
-			'panel' => $this->id,
+		return Yii::app()->createUrl($this->getOwner()->moduleId .  '/default/view', array(
+			'tag' => $this->getTag(),
+			'panel' => $this->getId(),
 		));
+	}
+
+	/**
+	 * @param array $data
+	 * @param null|string $tag
+	 */
+	public function load($data, $tag = null)
+	{
+		if ($tag) $this->_tag = $tag;
+		$this->_data = $data;
 	}
 
 	/**

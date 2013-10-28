@@ -20,15 +20,13 @@
 				</th>
 				<td>
 					<div style="overflow:auto">
-					<?php
-						if (is_string($value)) {
-							echo CHtml::encode($value);
-						} elseif ($this->highlightCode) {
-							echo $this->highlightPhp(var_export($value, true));
-						} else {
-							echo CHtml::encode(var_export($value, true));
-						}
-						?>
+						<?php if (is_string($value)): ?>
+							<?= CHtml::encode($value) ?>
+						<?php else: ?>
+							<div class="src <?= $this->highlightCode ? 'hl' : 'no-hl' ?>"><?php
+								CVarDumper::dump($value, 10, $this->highlightCode);
+							?></div>
+						<?php endif; ?>
 					</div>
 				</td>
 			</tr>

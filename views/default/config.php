@@ -8,7 +8,7 @@
  */
 
 $this->pageTitle = 'Full Configuration - Yii Debugger';
-$hl = $this->getComponent()->highlightCode;
+$hl = $this->owner->highlightCode;
 ?>
 <div class="default-view">
 	<div class="navbar">

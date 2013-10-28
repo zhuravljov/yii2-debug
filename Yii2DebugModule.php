@@ -4,29 +4,45 @@
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  * @package Yii2Debug
  * @since 1.1.13
+ *
+ * @property Yii2Debug $owner
  */
 class Yii2DebugModule extends CWebModule
 {
-	/**
-	 * @var Yii2Debug
-	 */
-	public $component;
-
 	public function beforeControllerAction($controller, $action)
 	{
 		if (
 			parent::beforeControllerAction($controller, $action) &&
-			$this->component->checkAccess()
+			$this->owner->checkAccess()
 		) {
 			// Отключение дебагера на страницах просмотра ранее сохраненных логов
-			Yii::app()->detachEventHandler('onEndRequest', array($this->component, 'onEndRequest'));
+			Yii::app()->detachEventHandler('onEndRequest', array($this->owner, 'onEndRequest'));
 			// Отключение сторонних шаблонизаторов
 			Yii::app()->setComponent('viewRenderer', null);
+			Yii::app()->setComponent('viewRenderer', array('enabled' => false));
 			// Сброс скрипта для вывода тулбара
 			Yii::app()->getClientScript()->reset();
 			return true;
 		}
 		else
 			return false;
+	}
+
+	private $_owner;
+
+	/**
+	 * @return Yii2Debug
+	 */
+	public function getOwner()
+	{
+		return $this->_owner;
+	}
+
+	/**
+	 * @param Yii2Debug $owner
+	 */
+	public function setOwner($owner)
+	{
+		$this->_owner = $owner;
 	}
 }

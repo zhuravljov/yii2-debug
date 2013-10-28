@@ -35,7 +35,8 @@ class Yii2LogPanel extends Yii2DebugPanel
 
 	public function getDetail()
 	{
-		foreach ($this->data['messages'] as $i => $log) {
+		$data = $this->getData();
+		foreach ($data['messages'] as $i => $log) {
 			list ($message, $level, $category, $time) = $log;
 			$time = date('H:i:s.', $time) . sprintf('%03d', (int)(($time - (int)$time) * 1000));
 			$traces = array();
@@ -56,9 +57,11 @@ class Yii2LogPanel extends Yii2DebugPanel
 					$traces = $lines;
 				}
 			}
-			$this->data['messages'][$i] = array($message, $level, $category, $time, $traces);
+			$data['messages'][$i] = array($message, $level, $category, $time, $traces);
 		}
-		return $this->render(dirname(__FILE__) . '/../views/panels/log.php');
+		return $this->render(dirname(__FILE__) . '/../views/panels/log.php', array(
+			'data' => $data,
+		));
 	}
 
 	public function save()

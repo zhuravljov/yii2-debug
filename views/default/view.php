@@ -57,10 +57,10 @@ $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 						</ul>
 					</div>
 					<?= CHtml::link(
-						'<i class="icon-star' . (!$this->getComponent()->getLock($tag) ? '-empty' : '') . '"></i>',
+						'<i class="icon-star' . (!$this->owner->getLock($tag) ? '-empty' : '') . '"></i>',
 						array('lock', 'tag' => $tag),
 						array(
-							'class' => 'lock btn' . ($this->getComponent()->getLock($tag) ? ' active' : ''),
+							'class' => 'lock btn' . ($this->owner->getLock($tag) ? ' active' : ''),
 							'data-toggle' => 'button',
 							'title' => 'Lock or unlock of deleting',
 						)

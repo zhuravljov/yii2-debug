@@ -19,14 +19,19 @@ class Yii2ConfigPanel extends Yii2DebugPanel
 
 	public function getSummary()
 	{
+		$data = $this->getData();
 		return $this->render(dirname(__FILE__) . '/../views/panels/config_bar.php', array(
-			'phpUrl' => Yii::app()->getUrlManager()->createUrl($this->component->moduleId . '/default/phpinfo'),
+			'yiiVersion' => $data['application']['yii'],
+			'phpVersion' => $data['php']['version'],
+			'phpUrl' => Yii::app()->getUrlManager()->createUrl($this->getOwner()->moduleId . '/default/phpinfo'),
 		));
 	}
 
 	public function getDetail()
 	{
-		return $this->render(dirname(__FILE__) . '/../views/panels/config.php');
+		return $this->render(dirname(__FILE__) . '/../views/panels/config.php', array(
+			'data' => $this->getData(),
+		));
 	}
 
 	public function save()

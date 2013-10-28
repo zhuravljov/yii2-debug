@@ -4,6 +4,8 @@
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  * @package Yii2Debug
  * @since 1.1.13
+ *
+ * @property Yii2Debug $owner
  */
 class DefaultController extends CController
 {
@@ -13,9 +15,18 @@ class DefaultController extends CController
 	/**
 	 * @return Yii2Debug
 	 */
+	public function getOwner()
+	{
+		return $this->getModule()->owner;
+	}
+
+	/**
+	 * @return Yii2Debug
+	 * @deprecated will removed in 1.2
+	 */
 	public function getComponent()
 	{
-		return $this->getModule()->component;
+		return $this->getModule()->owner;
 	}
 
 	/**
@@ -41,15 +52,15 @@ class DefaultController extends CController
 		}
 		$this->loadData($tag);
 		if (isset($this->component->panels[$panel])) {
-			$activePanel = $this->getComponent()->panels[$panel];
+			$activePanel = $this->getOwner()->panels[$panel];
 		} else {
-			$activePanel = $this->getComponent()->panels['request'];
+			$activePanel = $this->getOwner()->panels['request'];
 		}
 		$this->render('view', array(
 			'tag' => $tag,
 			'summary' => $this->summary,
 			'manifest' => $this->getManifest(),
-			'panels' => $this->getComponent()->panels,
+			'panels' => $this->getOwner()->panels,
 			'activePanel' => $activePanel,
 		));
 	}
@@ -60,8 +71,8 @@ class DefaultController extends CController
 	 */
 	public function actionLock($tag)
 	{
-		$lock = $this->getComponent()->getLock($tag);
-		$this->getComponent()->setLock($tag, !$lock);
+		$lock = $this->getOwner()->getLock($tag);
+		$this->getOwner()->setLock($tag, !$lock);
 		echo !$lock;
 	}
 
@@ -76,7 +87,7 @@ class DefaultController extends CController
 	{
 		$this->loadData($tag);
 
-		$dbPanel = $this->getComponent()->panels['db'];
+		$dbPanel = $this->getOwner()->panels['db'];
 		if (!($dbPanel instanceof Yii2DbPanel)) {
 			throw new Exception('Yii2DbPanel not found');
 		}
@@ -92,12 +103,12 @@ class DefaultController extends CController
 		$db = Yii::app()->getComponent($connection);
 
 		if (!Yii::app()->request->isAjaxRequest) {
-			$this->getComponent()->setLock($tag, true);
+			$this->getOwner()->setLock($tag, true);
 			$this->render('explain', array(
 				'tag' => $tag,
 				'summary' => $this->summary,
 				'manifest' => $this->getManifest(),
-				'panels' => $this->getComponent()->panels,
+				'panels' => $this->getOwner()->panels,
 				'dbPanel' => $dbPanel,
 				'connection' => $db,
 				'procedure' => Yii2DbPanel::getExplainQuery($query, $db->driverName),
@@ -120,7 +131,7 @@ class DefaultController extends CController
 		$this->loadData($tag);
 		$this->renderPartial('toolbar', array(
 			'tag' => $tag,
-			'panels' => $this->getComponent()->panels,
+			'panels' => $this->getOwner()->panels,
 		));
 	}
 
@@ -134,7 +145,7 @@ class DefaultController extends CController
 	protected function getManifest()
 	{
 		if ($this->_manifest === null) {
-			$path = $this->getComponent()->logPath;
+			$path = $this->getOwner()->logPath;
 			$indexFile = "$path/index.json";
 			if (is_file($indexFile)) {
 				$this->_manifest = array_reverse(json_decode(file_get_contents($indexFile), true), true);
@@ -149,16 +160,15 @@ class DefaultController extends CController
 	{
 		$manifest = $this->getManifest();
 		if (isset($manifest[$tag])) {
-			$path = $this->getComponent()->logPath;
+			$path = $this->getOwner()->logPath;
 			$dataFile = "$path/$tag.json";
 			$data = json_decode(file_get_contents($dataFile), true);
-			foreach ($this->getComponent()->panels as $id => $panel) {
+			foreach ($this->getOwner()->panels as $id => $panel) {
 				if (isset($data[$id])) {
-					$panel->tag = $tag;
-					$panel->load($data[$id]);
+					$panel->load($data[$id], $tag);
 				} else {
 					// remove the panel since it has not received any data
-					unset($this->getComponent()->panels[$id]);
+					unset($this->getOwner()->panels[$id]);
 				}
 			}
 			$this->summary = $data['summary'];
@@ -169,7 +179,7 @@ class DefaultController extends CController
 
 	public function actionConfig()
 	{
-		if (!$this->getComponent()->showConfig) {
+		if (!$this->getOwner()->showConfig) {
 			throw new CHttpException(403, 'Forbidden');
 		}
 		$components = array();
@@ -188,28 +198,14 @@ class DefaultController extends CController
 		ksort($modules);
 		$data = $this->hideConfigData(
 			array(
-				'app' => $this->prepareData(get_object_vars(Yii::app())),
-				'components' => $this->prepareData($components),
-				'modules' => $this->prepareData($modules),
-				'params' => $this->prepareData(Yii::app()->params),
+				'app' => Yii2Debug::prepareData(Yii::app()),
+				'components' => Yii2Debug::prepareData($components),
+				'modules' => Yii2Debug::prepareData($modules),
+				'params' => Yii2Debug::prepareData(Yii::app()->params),
 			),
-			$this->getComponent()->hiddenConfigOptions
+			$this->getOwner()->hiddenConfigOptions
 		);
 		$this->render('config', $data);
-	}
-
-	private function prepareData($data)
-	{
-		$result = array();
-		foreach ($data as $key => $value) {
-			if (is_object($value)) {
-				$value = array_merge(array(
-					'class' => get_class($value)
-				), get_object_vars($value));
-			}
-			$result[$key] = $value;
-		}
-		return $result;
 	}
 
 	/**

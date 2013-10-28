@@ -1,15 +1,16 @@
 <?php
 /* @var Yii2ConfigPanel $this */
+/* @var array $data */
 ?>
 <?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 	'caption' => 'Application Configuration',
 	'values' => array(
-		'Yii Version' => $this->data['application']['yii'],
-		'Application Name' => $this->data['application']['name'],
-		'Debug Mode' => $this->data['application']['debug'] ? 'Yes' : 'No',
+		'Yii Version' => $data['application']['yii'],
+		'Application Name' => $data['application']['name'],
+		'Debug Mode' => $data['application']['debug'] ? 'Yes' : 'No',
 	),
 )) ?>
-<?php if ($this->component->showConfig): ?>
+<?php if ($this->owner->showConfig): ?>
 <div>
 	<?= CHtml::link('Configuration', array('config'), array('class' => 'btn btn-info')) ?>
 </div>
@@ -17,10 +18,10 @@
 <?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 	'caption' => 'PHP Configuration',
 	'values' => array(
-		'PHP Version' => $this->data['php']['version'],
-		'Xdebug' => $this->data['php']['xdebug'] ? 'Enabled' : 'Disabled',
-		'APC' => $this->data['php']['apc'] ? 'Enabled' : 'Disabled',
-		'Memcache' => $this->data['php']['memcache'] ? 'Enabled' : 'Disabled',
+		'PHP Version' => $data['php']['version'],
+		'Xdebug' => $data['php']['xdebug'] ? 'Enabled' : 'Disabled',
+		'APC' => $data['php']['apc'] ? 'Enabled' : 'Disabled',
+		'Memcache' => $data['php']['memcache'] ? 'Enabled' : 'Disabled',
 	),
 )) ?>
 <div>

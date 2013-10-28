@@ -36,10 +36,10 @@ $this->pageTitle = 'Available Debug Data - Yii Debugger';
 					<tr>
 						<td style="text-align:center;">
 							<?= CHtml::link(
-								'<i class="icon-star' . (!$this->getComponent()->getLock($tag) ? '-empty' : '') . '"></i>',
+								'<i class="icon-star' . (!$this->owner->getLock($tag) ? '-empty' : '') . '"></i>',
 								array('lock', 'tag' => $tag),
 								array(
-									'class' => 'lock' . ($this->getComponent()->getLock($tag) ? ' active' : ''),
+									'class' => 'lock' . ($this->owner->getLock($tag) ? ' active' : ''),
 									'title' => 'Lock or unlock of deleting',
 								)
 							) ?>

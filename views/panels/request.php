@@ -1,5 +1,6 @@
 <?php
 /* @var Yii2RequestPanel $this */
+/* @var array $data */
 ?>
 <ul class="nav nav-tabs">
 	<li class="tab-pane active">
@@ -20,52 +21,52 @@
 		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 			'caption' => 'Routing',
 			'values' => array(
-				'Route' => $this->data['route'],
-				'Action' => $this->data['action'],
-				'Parameters' => $this->data['actionParams'],
+				'Route' => $data['route'],
+				'Action' => $data['action'],
+				'Parameters' => $data['actionParams'],
 			),
 		)) ?>
 		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 			'caption' => '$_GET',
-			'values' => $this->data['GET'],
+			'values' => $data['GET'],
 		)) ?>
 		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 			'caption' => '$_POST',
-			'values' => $this->data['POST'],
+			'values' => $data['POST'],
 		)) ?>
 		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 			'caption' => '$_FILES',
-			'values' => $this->data['FILES'],
+			'values' => $data['FILES'],
 		)) ?>
 		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 			'caption' => '$_COOKIE',
-			'values' => $this->data['COOKIE'],
+			'values' => $data['COOKIE'],
 		)) ?>
 	</div>
 	<div id="headers" class="tab-pane">
 		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 			'caption' => 'Request Headers',
-			'values' => $this->data['requestHeaders'],
+			'values' => $data['requestHeaders'],
 		)) ?>
 		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 			'caption' => 'Response Headers',
-			'values' => $this->data['responseHeaders'],
+			'values' => $data['responseHeaders'],
 		)) ?>
 	</div>
 	<div id="session" class="tab-pane">
 		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 			'caption' => '$_SESSION',
-			'values' => $this->data['SESSION'],
+			'values' => $data['SESSION'],
 		)) ?>
 		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 			'caption' => 'Flashes',
-			'values' => $this->data['flashes'],
+			'values' => $data['flashes'],
 		)) ?>
 	</div>
 	<div id="server" class="tab-pane">
 		<?= $this->render(dirname(__FILE__) . '/_detail.php', array(
 			'caption' => '$_SERVER',
-			'values' => $this->data['SERVER'],
+			'values' => $data['SERVER'],
 		)) ?>
 	</div>
 </div>

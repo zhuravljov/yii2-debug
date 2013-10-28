@@ -130,7 +130,7 @@
 		<?php
 		foreach ($connections as $id => $info) {
 			$caption = 'Component: ';
-			if ($this->component->showConfig) {
+			if ($this->owner->showConfig) {
 				$caption .= CHtml::link($id, array('config', '#' => 'components-' . $id));
 			} else {
 				$caption .= $id;
