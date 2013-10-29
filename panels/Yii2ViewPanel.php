@@ -27,9 +27,12 @@ class Yii2ViewPanel extends Yii2DebugPanel
 
 	public function getSummary()
 	{
-		return $this->render(dirname(__FILE__) . '/../views/panels/view_bar.php', array(
-			'count' => count($this->data),
-		));
+		if ($count = count($this->data)) {
+			return $this->render(dirname(__FILE__) . '/../views/panels/view_bar.php', array(
+				'count' => $count,
+			));
+		}
+		return '';
 	}
 
 	public function getDetail()
