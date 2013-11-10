@@ -146,9 +146,9 @@ class DefaultController extends CController
 	{
 		if ($this->_manifest === null) {
 			$path = $this->getOwner()->logPath;
-			$indexFile = "$path/index.json";
+			$indexFile = "$path/index.data";
 			if (is_file($indexFile)) {
-				$this->_manifest = array_reverse(json_decode(file_get_contents($indexFile), true), true);
+				$this->_manifest = array_reverse(unserialize(file_get_contents($indexFile)), true);
 			} else {
 				$this->_manifest = array();
 			}
@@ -161,8 +161,8 @@ class DefaultController extends CController
 		$manifest = $this->getManifest();
 		if (isset($manifest[$tag])) {
 			$path = $this->getOwner()->logPath;
-			$dataFile = "$path/$tag.json";
-			$data = json_decode(file_get_contents($dataFile), true);
+			$dataFile = "$path/$tag.data";
+			$data = unserialize(file_get_contents($dataFile));
 			foreach ($this->getOwner()->panels as $id => $panel) {
 				if (isset($data[$id])) {
 					$panel->load($data[$id], $tag);

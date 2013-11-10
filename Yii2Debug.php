@@ -209,10 +209,20 @@ JS
 		$path = $this->logPath;
 		if (!is_dir($path)) mkdir($path);
 
-		$indexFile = "$path/index.json";
+		// Конвертация данных из json в serialize
+		if (file_exists("$path/index.json")) {
+			foreach (glob("$path/*.json") as $jsonFile) {
+				$data = json_decode(file_get_contents($jsonFile), true);
+				$dataFile = substr($jsonFile, -4) . 'data';
+				file_put_contents($dataFile, serialize($data));
+				@unlink($jsonFile);
+			}
+		}
+
+		$indexFile = "$path/index.data";
 		$manifest = array();
 		if (is_file($indexFile)) {
-			$manifest = json_decode(file_get_contents($indexFile), true);
+			$manifest = unserialize(file_get_contents($indexFile));
 		}
 
 		$data = array();
@@ -244,8 +254,8 @@ JS
 		);
 		$this->resizeHistory($manifest);
 
-		file_put_contents("$path/{$this->getTag()}.json", json_encode($data));
-		file_put_contents($indexFile, json_encode($manifest));
+		file_put_contents("$path/{$this->getTag()}.data", serialize($data));
+		file_put_contents($indexFile, serialize($manifest));
 	}
 
 	/**
@@ -264,7 +274,7 @@ JS
 			$n = $count - $this->historySize;
 			foreach ($tags as $tag) {
 				if (!$this->getLock($tag)) {
-					@unlink("$path/$tag.json");
+					@unlink("$path/$tag.data");
 					unset($manifest[$tag]);
 					if (--$n <= 0) break;
 				}
@@ -319,9 +329,9 @@ JS
 	public function getLock($tag)
 	{
 		if ($this->_locks === null) {
-			$locksFile = $this->logPath . '/locks.json';
+			$locksFile = $this->logPath . '/locks.data';
 			if (is_file($locksFile)) {
-				$this->_locks = array_flip(json_decode(file_get_contents($locksFile), true));
+				$this->_locks = array_flip(unserialize(file_get_contents($locksFile)));
 			} else {
 				$this->_locks = array();
 			}
@@ -342,8 +352,8 @@ JS
 			} else {
 				unset($this->_locks[$tag]);
 			}
-			$locksFile = $this->logPath . '/locks.json';
-			file_put_contents($locksFile, json_encode(array_keys($this->_locks)));
+			$locksFile = $this->logPath . '/locks.data';
+			file_put_contents($locksFile, serialize(array_keys($this->_locks)));
 		}
 	}
 
