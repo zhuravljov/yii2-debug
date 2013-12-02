@@ -138,6 +138,9 @@ class Yii2Debug extends CApplicationComponent
 			'db' => array(
 				'class' => 'Yii2DbPanel',
 			),
+			'view' => array(
+				'class' => 'Yii2ViewPanel',
+			), 
 		);
 	}
 
