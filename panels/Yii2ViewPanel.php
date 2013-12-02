@@ -21,6 +21,7 @@ class Yii2ViewPanel extends Yii2DebugPanel
 			'viewRenderer' => array(
 				'class' => 'Yii2DebugViewRenderer',
 				'instance' => $renderer,
+				'fileExtension' => $renderer->fileExtension,
 			),
 		), false);
 	}
