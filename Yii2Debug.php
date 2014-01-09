@@ -369,7 +369,7 @@ JS
 		$result = array();
 		if (is_array($data) || $data instanceof CMap) {
 			foreach ($data as $key => $value) {
-				$result[$key] = static::prepareData($value);
+				$result[$key] = self::prepareData($value);
 			}
 		} elseif (is_object($data)) {
 			if (!in_array($data, $parents, true)) {
@@ -381,7 +381,7 @@ JS
 					}
 				}
 				foreach (get_object_vars($data) as $key => $value) {
-					$result[$key] = static::prepareData($value);
+					$result[$key] = self::prepareData($value);
 				}
 				array_pop($parents);
 			} else {

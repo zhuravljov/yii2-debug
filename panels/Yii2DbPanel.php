@@ -358,7 +358,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 	 */
 	public static function explain($query, $connection)
 	{
-		$procedure = static::getExplainQuery($query, $connection->driverName);
+		$procedure = self::getExplainQuery($query, $connection->driverName);
 		if ($procedure === null) {
 			throw new Exception('Explain not available');
 		}
@@ -374,7 +374,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 	{
 		$connections = array();
 		foreach ($this->data['connections'] as $name => $connection) {
-			if (static::getExplainQuery($query, $connection['driver']) !== null) {
+			if (self::getExplainQuery($query, $connection['driver']) !== null) {
 				$connections[$name] = $connection;
 			}
 		}
