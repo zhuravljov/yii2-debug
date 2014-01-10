@@ -7,6 +7,7 @@
 	'values' => array(
 		'Yii Version' => $data['application']['yii'],
 		'Application Name' => $data['application']['name'],
+		'Time Zone' => isset($data['application']['timezone']) ? $data['application']['timezone'] : '',
 		'Debug Mode' => $data['application']['debug'] ? 'Yes' : 'No',
 	),
 )); ?>

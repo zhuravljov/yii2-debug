@@ -42,6 +42,7 @@ class Yii2ConfigPanel extends Yii2DebugPanel
 			'application' => array(
 				'yii' => Yii::getVersion(),
 				'name' => Yii::app()->name,
+				'timezone' => Yii::app()->getTimeZone(),
 				'debug' => YII_DEBUG,
 			),
 			'php' => array(
