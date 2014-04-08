@@ -90,7 +90,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 	{
 		$connections = array();
 		foreach ($this->data['connections'] as $id => $connection) {
-			if (isset($connection['info'])) {
+			if ($connection['driver'] == 'mysql' && isset($connection['info'])) {
 				foreach (explode('  ', $connection['info']) as $line) {
 					list($key, $value) = explode(': ', $line, 2);
 					$connection[$key] = $value;
