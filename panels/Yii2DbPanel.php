@@ -362,7 +362,13 @@ class Yii2DbPanel extends Yii2DebugPanel
 		if ($procedure === null) {
 			throw new Exception('Explain not available');
 		}
-		return $connection->createCommand($procedure)->queryAll();
+		switch ($connection->driverName) {
+			case 'oci':
+				$connection->createCommand($procedure)->execute();
+				return $connection->createCommand('SELECT * FROM table(dbms_xplan.display)')->queryAll();
+			default:
+				return $connection->createCommand($procedure)->queryAll();
+		}
 	}
 
 	/**
