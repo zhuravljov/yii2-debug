@@ -1,15 +1,21 @@
-yii2-debug (v1.2)
+yii2-debug
 =================
 
-Отладочная панель для Yii 1.1 портированная из Yii 2.
+Debug panel for Yii 1.1 (ported from Yii 2).
 
+[![Latest Stable Version](https://poser.pugx.org/zhuravljov/yii2-debug/version.svg)](https://packagist.org/packages/zhuravljov/yii2-debug)
 [![Total Downloads](https://poser.pugx.org/zhuravljov/yii2-debug/downloads.png)](https://packagist.org/packages/zhuravljov/yii2-debug)
 
-Использование
+Installation
 -------------
 
-Необходимо скопировать исходники в `/protected/extensions` и дополнить конфиг
-своего проекта следующими настройками:
+This extension is available at packagist.org and can be installed via composer by following command:
+
+`composer require --dev zhuravljov/yii2-debug`.
+
+If you want to install this extension manually just copy sources to `/protected/extensions` directory.
+
+To enable toolbar in your application add following lines to config:
 
 ```php
 return array(
@@ -18,7 +24,8 @@ return array(
     ),
     'components' => array(
         'debug' => array(
-            'class' => 'ext.yii2-debug.Yii2Debug',
+            'class' => 'vendor.zhuravljov.yii2-debug.Yii2Debug', // composer installation
+            //'class' => 'ext.yii2-debug.Yii2Debug', // manual installation
         ),
         'db' => array(
             'enableProfiling' => true,
@@ -28,48 +35,46 @@ return array(
 );
 ```
 
-Настройка
+Configuration
 ---------
 
-Для более тонкой настройки компонента доступны параметры:
+You can customize debug panel behavior with this options:
 
-- `enabled` - включение/выключение дебаггера.
-- `allowedIPs` - список ip и масок, которым разрешен доступ к панели. По умолчанию `array('127.0.0.1', '::1')`.
-- `accessExpression` - дополнительное условие доступа к панели.
-- `logPath` - путь для записи логов. По умолчанию `/runtime/debug`.
-- `historySize` - максимальное кол-во записанных логов. Более ранние логи будут удаляться.
-- `highlightCode` - подсветка кода. Подсвечиваются sql-запросы и php-массивы данных.
-  Также параметр `highlightCode` можно настраивать для каждой панели отдельно.
-- `moduleId ` - ID модуля для просмотра ранее сохраненных данных. По умолчанию `debug`.
-- `showConfig` - показывать или нет страницу с конфигурацией приложения. По умолчанию `false`.
-- `hiddenConfigOptions` - список опций значения которых необходимо скрывать при выводе
-  на страницу с конфигурацией приложения. По умолчанию скрываются свойства `username`
-  и `password` компонента `db`.
-- `internalUrls` - использование внутренних роутов для urlManager
-- `panels` - список подключенных к отладчику панелей.
+- `enabled` - enable/disable debug panel.
+- `allowedIPs` - list of IPs that are allowed to access debug toolbar. Default `array('127.0.0.1', '::1')`.
+- `accessExpression` - additional php expression for access evaluation.
+- `logPath` - directory storing the debugger data files. This can be specified using a path alias. Default `/runtime/debug`.
+- `historySize` - maximum number of debug data files to keep. If there are more files generated, the oldest ones will be removed.
+- `highlightCode` - highlight code. Highlight SQL queries and PHP variables. This parameter can be set for each panel individually.
+- `moduleId ` - module ID for viewing stored debug logs. Default `debug`.
+- `showConfig` - show brief application configuration page. Default `false`.
+- `hiddenConfigOptions` - list of unsecure component options to hide (like login, passwords, secret keys).
+  Default is to hide `username` and `password` of `db` component.
+- `internalUrls` - use nice routes rules in debug module.
+- `panels` - list of debug panels.
 
-Каждую подключаемую к отладчику панель так-же можно конфигурировать. Например:
+Each attached panel can be configured individually, for example:
 
 ```php
 'debug' => array(
     'class' => 'ext.yii2-debug.Yii2Debug',
     'panels' => array(
         'db' => array(
-            // Отключить подсветку SQL
+            // Disable code highlighting.
             'highlightCode' => false,
-            // Отключить подстановку параметров в SQL-запрос
+            // Disable substitution of placeholders with values in SQL queries.
             'insertParamValues' => false,
         ),
     ),
 ),
 ```
 
-Для каждой панели доступен callback-параметр `filterData`. Он дает возможность
-обработать массив данных перед сохранением этих данных в лог. Это может быть
-полезно в том случае, когда в данных проходит какая-то секретная информация, и
-ее нужно каким-то образом экранировать либо вообще изъять из массива.
+Each panel have callback option `filterData`.
+You can define custom function for filtering input data before writing it in to debug log.
+It's useful when you need to hide something secret or just delete data from logs.
+Be careful with data structure manipulation. It can lead to log parsing errors.
 
-Пример:
+Example:
 
 ```php
 'debug' => array(
@@ -77,7 +82,7 @@ return array(
     'panels' => array(
         'db' => array(
             'filterData' => function($data){
-                // Обработка
+                // Your code here
                 return $data;
             }
         ),
@@ -85,38 +90,43 @@ return array(
 ),
 ```
 
-Будьте осторожны с изменением структуры данных. Это может стать причиной ошибок
-при просмотре.
-
-Подключение собственных панелей
+Creating own panels
 -------------------------------
 
-Необходимо разработать свой класс унаследовав его от `Yii2DebugPanel`, например:
+To create own debug panel you can extend class `Yii2DebugPanel`, for example:
 
 ```php
 class MyTestPanel extends Yii2DebugPanel
 {
-    // Имя вашей панели, выводится в меню отладчика
+    /**
+     * The name of panel printed in debugger
+     */
     public function getName()
     {
         return 'Name';
     }
 
-    // Функция должна возвращать HTML для вывода в тулбар
-    // Данные доступны через свойство $this->data
+    /**
+     * Return summary html with results of execution in current request.
+     * Data is available through $this->data
+     */
     public function getSummary()
     {
         return '';
     }
 
-    // Функция должна вернуть HTML с детальной информацией
-    // Данные доступны через свойство $this->data
+    /**
+     * Return detailed html report with results of execution in current request.
+     * Data is available through $this->data
+     */
     public function getDetail()
     {
         return '';
     }
 
-    // Функция должна вернуть массив данных для сохранения в лог
+    /**
+     * Return data required for storing in logs.
+     */
     public function save()
     {
         return array();
@@ -124,7 +134,7 @@ class MyTestPanel extends Yii2DebugPanel
 }
 ```
 
-И подключить его в конфиг:
+And attach this panel in config:
 
 ```php
 'panels' => array(
@@ -135,19 +145,18 @@ class MyTestPanel extends Yii2DebugPanel
 ),
 ```
 
-Dump переменных
+Variables dumping
 ---------------
 
-С помощью метода `Yii2Debug::dump()` можно писать в лог переменные любого типа,
-и просматривать их на странице "Logs".
+With static method `Yii2Debug::dump()` you can dump any data and examine it later in debug log.
 
-Различные приёмы
+Miscellaneous
 ----------------
 
 ### Status Code
 
-Если в вашем проекте используется PHP < 5.4, то для записи http-кода в логи и
-вывода его на панель можно воспользоваться следующей настройкой:
+If you using PHP < 5.4, debug panel can't detect redirects by himself.
+You can use following code as workaround:
 
 ```php
 'panels' => array(
@@ -166,6 +175,7 @@ Dump переменных
 ),
 ```
 
-Таким образом 302-й код определяется косвенно, исходя из наличия заголовка `Location`.
-Коды 4xx и 5xx определяются расширением самостоятельно. В PHP 5.4 для определения
-http-кода расширение использует встроенную функцию `http_response_code()`.
+Such code just set 302 code if `Location` header is present.
+Codes like 4xx and 5xx can be detected in debug panel by himself.
+In PHP 5.4 and higher debug panel uses native php function `http_response_code()` for detecting http response code,
+and there is no need to use this workaround.

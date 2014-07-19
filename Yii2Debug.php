@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Основной компонент для подключения отладочной панели
+ * Application component of debug panel.
  *
  * @property string $tag
  *
@@ -12,48 +12,56 @@
 class Yii2Debug extends CApplicationComponent
 {
 	/**
-	 * @var array список ip и масок, которым разрешен доступ к панели
+	 * @var array the list of IPs that are allowed to access this module.
+	 * Each array element represents a single IP filter which can be either an IP address
+	 * or an address with wildcard (e.g. 192.168.0.*) to represent a network segment.
+	 * The default value is `['127.0.0.1', '::1']`, which means the module can only be accessed
+	 * by localhost.
 	 */
 	public $allowedIPs = array('127.0.0.1', '::1');
 	/**
-	 * @var null|string|callback дополнительное условие доступа к панели
+	 * @var null|string|callback Additional php expression for access evaluation.
 	 */
 	public $accessExpression;
 	/**
-	 * @var array|Yii2DebugPanel[]
+	 * @var array|Yii2DebugPanel[] list debug panels. The array keys are the panel IDs, and values are the corresponding
+	 * panel class names or configuration arrays. This will be merged with ::corePanels().
+	 * You may reconfigure a core panel via this property by using the same panel ID.
+	 * You may also disable a core panel by setting it to be false in this property.
 	 */
 	public $panels = array();
 	/**
-	 * @var string путь для записи логов. По умолчанию /runtime/debug
+	 * @var string the directory storing the debugger data files. This can be specified using a path alias.
 	 */
 	public $logPath;
 	/**
-	 * @var int максимальное кол-во логов
+	 * @var integer the maximum number of debug data files to keep. If there are more files generated,
+	 * the oldest ones will be removed.
 	 */
 	public $historySize = 50;
 	/**
-	 * @var bool
+	 * @var bool enable/disable component in application.
 	 */
 	public $enabled = true;
 	/**
-	 * @var string id модуля для просмотра отладочной информации
+	 * @var string module ID for viewing stored debug logs.
 	 */
 	public $moduleId = 'debug';
 	/**
-	 * @var bool использование внутренних url-правил
+	 * @var bool use nice route rules in debug module.
 	 */
 	public $internalUrls = true;
 		/**
-	 * @var bool подсветка кода на страницах с отладочной информацией
+	 * @var bool highlight code in debug logs.
 	 */
 	public $highlightCode = true;
 	/**
-	 * @var bool показывать или нет страницу с конфигурацией приложения
+	 * @var bool show brief application configuration.
 	 */
 	public $showConfig = false;
 	/**
-	 * @var array список опций значения которых необходимо скрывать при выводе
-	 * на страницу с конфигурацией приложения.
+	 * @var array list of unsecure component options (like login, passwords, secret keys) that
+	 * will be hidden in application configuration page.
 	 */
 	public $hiddenConfigOptions = array(
 		'components/db/username',
@@ -63,9 +71,8 @@ class Yii2Debug extends CApplicationComponent
 	private $_tag;
 
 	/**
-	 * Генерируется уникальная метка страницы, подключается модуль просмотра,
-	 * устанавливается обработчик для сбора отладочной информации, регистрируются
-	 * скрипты для вывода дебаг-панели
+	 * Panel initialization.
+	 * Generate unique tag for page. Attach panels, log watcher. Register scripts for printing debug panel.
 	 */
 	public function init()
 	{
@@ -109,7 +116,7 @@ class Yii2Debug extends CApplicationComponent
 	}
 
 	/**
-	 * @return string метка текущей страницы
+	 * @return string current page tag
 	 */
 	public function getTag()
 	{
@@ -118,7 +125,7 @@ class Yii2Debug extends CApplicationComponent
 	}
 
 	/**
-	 * @return array страницы по умолчанию
+	 * @return array default panels
 	 */
 	protected function corePanels()
 	{
@@ -153,7 +160,7 @@ class Yii2Debug extends CApplicationComponent
 	}
 
 	/**
-	 * Регистрация скриптов для загрузки дебаг-панели
+	 * Register debug panel scripts.
 	 */
 	protected function initToolbar()
 	{
@@ -202,7 +209,7 @@ JS
 	}
 
 	/**
-	 * Запись отладочной информации
+	 * Log processing routine.
 	 */
 	protected function processDebug()
 	{
@@ -259,7 +266,7 @@ JS
 	}
 
 	/**
-	 * Удаление ранее сохраненных логов когда общее их кол-во больше historySize
+	 * Debug files rotation according to {@link ::$historySize}.
 	 * @param $manifest
 	 */
 	protected function resizeHistory(&$manifest)
@@ -283,7 +290,7 @@ JS
 	}
 
 	/**
-	 * Проверка доступа
+	 * Check access rights.
 	 * @return bool
 	 */
 	public function checkAccess()
@@ -309,7 +316,7 @@ JS
 	}
 
 	/**
-	 * Дамп переменной
+	 * Dump variable to debug log.
 	 * @param mixed $data
 	 */
 	public static function dump($data)
@@ -358,7 +365,7 @@ JS
 	}
 
 	/**
-	 * Каскадное преобразование смешанных данных в массив
+	 * Convert data to plain array in recursive manner.
 	 * @param mixed $data
 	 * @return array
 	 */
