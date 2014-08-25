@@ -75,11 +75,14 @@ class Yii2RequestPanel extends Yii2DebugPanel
 			$actionParams = $controller->actionParams;
 		}
 
-		/* @var CWebUser $user */
+		$flashes = array();
 		$user = Yii::app()->getComponent('user', false);
+		if ($user instanceof CWebUser) {
+			$flashes = $user->getFlashes(false);
+		}
 
 		return array(
-			'flashes' => $user ? $user->getFlashes(false) : array(),
+			'flashes' => $flashes,
 			'statusCode' => $this->getStatusCode(),
 			'requestHeaders' => $requestHeaders,
 			'responseHeaders' => $responseHeaders,
