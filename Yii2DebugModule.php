@@ -21,6 +21,22 @@ class Yii2DebugModule extends CWebModule
 			Yii::app()->setComponents(array('viewRenderer' => array('enabled' => false)), false);
 			// Сброс скрипта для вывода тулбара
 			Yii::app()->getClientScript()->reset();
+
+			/**
+			 * Fixes https://github.com/zhuravljov/yii2-debug/issues/15 issue
+			 * Clears client script map defined in app config
+			 * and thus makes yii2-debug independent on config manipulations with jquery or bootstrap files
+			 * 'clientScript' => array(
+			 *      'scriptMap' => array(
+			 *          'jquery.js' => false
+			 *          'bootstrap.min.css' => false,
+			 *          'bootstrap.min.js' => false,
+			 *          'bootstrap-yii.css' => false
+			 *      )
+			 * )
+			 */
+			Yii::app()->getClientScript()->scriptMap = array();
+
 			return true;
 		}
 		else
