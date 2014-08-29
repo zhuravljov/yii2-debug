@@ -28,6 +28,7 @@ $this->pageTitle = $activePanel->getName() . ' - Yii Debugger';
 				<div class="callout alert alert-info">
 					<div class="btn-group">
 						<?php echo CHtml::link('All', array('index'), array('class' => 'btn')); ?>
+						<?php echo CHtml::link('Latest', array('view', 'panel' => $activePanel->id), array('class' => 'btn')); ?>
 						<button class="btn dropdown-toggle" data-toggle="dropdown">
 							Last 10
 							<span class="caret"></span>

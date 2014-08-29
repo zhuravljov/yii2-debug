@@ -49,6 +49,7 @@ class DefaultController extends CController
 		if ($tag === null) {
 			$tags = array_keys($this->getManifest());
 			$tag = reset($tags);
+			$this->redirect(array('view', 'tag' => $tag, 'panel' => $panel));
 		}
 		$this->loadData($tag);
 		if (isset($this->component->panels[$panel])) {

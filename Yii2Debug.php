@@ -154,7 +154,7 @@ class Yii2Debug extends CApplicationComponent
 			'' => 'default/index',
 			'<tag:[0-9a-f]+>/<action:toolbar|explain>' => 'default/<action>',
 			'<tag:[0-9a-f]+>/<panel:\w+>' => 'default/view',
-			'<tag:[0-9a-f]+>' => 'default/view',
+			'latest/<panel:\w+>' => 'default/view',
 			'<action:\w+>' => 'default/<action>',
 		);
 	}
