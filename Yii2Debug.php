@@ -216,16 +216,6 @@ JS
 		$path = $this->logPath;
 		if (!is_dir($path)) mkdir($path);
 
-		// Конвертация данных из json в serialize
-		if (file_exists("$path/index.json")) {
-			foreach (glob("$path/*.json") as $jsonFile) {
-				$data = json_decode(file_get_contents($jsonFile), true);
-				$dataFile = substr($jsonFile, -4) . 'data';
-				file_put_contents($dataFile, serialize($data));
-				@unlink($jsonFile);
-			}
-		}
-
 		$indexFile = "$path/index.data";
 		$manifest = array();
 		if (is_file($indexFile)) {
