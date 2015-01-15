@@ -16,6 +16,17 @@ class Yii2DbPanel extends Yii2DebugPanel
 	 */
 	public $canExplain = true;
 
+	/**
+	 * @inheritdoc
+	 */
+	public function init()
+	{
+		$this->_logsEnabled = true;
+		$this->_logsLevels = CLogger::LEVEL_PROFILE;
+		$this->_logsCategories = 'system.db.CDbCommand.*';
+		parent::init();
+	}
+
 	public function getName()
 	{
 		return 'Database';
@@ -308,8 +319,6 @@ class Yii2DbPanel extends Yii2DebugPanel
 
 	public function save()
 	{
-		$messages = Yii::getLogger()->getLogs(CLogger::LEVEL_PROFILE, 'system.db.CDbCommand.*');
-
 		$connections = array();
 		foreach (Yii::app()->getComponents() as $id => $component) {
 			if ($component instanceof CDbConnection) {
@@ -326,7 +335,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 		}
 
 		return array(
-			'messages' => $messages,
+			'messages' => $this->getLogs(),
 			'connections' => $connections,
 		);
 	}
