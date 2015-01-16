@@ -44,6 +44,10 @@ class Yii2Debug extends CApplicationComponent
 	 */
 	public $enabled = true;
 	/**
+	 * @var bool show/hide toolbar in page.
+	 */
+	public $viewToolbar = true;
+	/**
 	 * @var string module ID for viewing stored debug logs.
 	 */
 	public $moduleId = 'debug';
@@ -111,8 +115,10 @@ class Yii2Debug extends CApplicationComponent
 			Yii::app()->getUrlManager()->addRules($rules, false);
 		}
 
-		Yii::app()->attachEventHandler('onEndRequest', array($this, 'onEndRequest'));
-		$this->initToolbar();
+		Yii::getLogger()->attachEventHandler('onFlush', array($this, 'onLogFlush'));
+
+		if ($this->viewToolbar)
+			$this->initToolbar();
 	}
 
 	/**
@@ -203,7 +209,7 @@ JS
 	/**
 	 * @param CEvent $event
 	 */
-	protected function onEndRequest($event)
+	protected function onLogFlush($event)
 	{
 		$this->processDebug();
 	}
