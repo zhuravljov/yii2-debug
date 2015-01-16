@@ -24,6 +24,20 @@ class Yii2DebugPanel extends CComponent
 	 */
 	public $filterData;
 	/**
+	 * @var bool Collect log messages by Yii2DebugLogRoute.
+	 */
+	protected $_logsEnabled = false;
+	/**
+	 * @var string
+	 * @see Yii2DebugLogRoute::categories
+	 */
+	protected $_logsCategories = array();
+	/**
+	 * @var string
+	 * @see Yii2DebugLogRoute::levels
+	 */
+	protected $_logsLevels = '';
+	/**
 	 * @var Yii2Debug
 	 */
 	private $_owner;
@@ -39,6 +53,10 @@ class Yii2DebugPanel extends CComponent
 	 * @var array массив отладочных данных
 	 */
 	private $_data;
+	/**
+	 * @var Yii2DebugLogRoute
+	 */
+	private $_logRoute;
 
 	/**
 	 * @return string название панели для вывода в меню
@@ -81,6 +99,17 @@ class Yii2DebugPanel extends CComponent
 		$this->_owner = $owner;
 		$this->_id = $id;
 		$this->_tag = $owner->getTag();
+		$this->init();
+	}
+
+	/**
+	 * Debug panel initialization.
+	 */
+	public function init()
+	{
+		if ($this->_logsEnabled) {
+			$this->initLogRoute();
+		}
 	}
 
 	/**
@@ -215,5 +244,40 @@ class Yii2DebugPanel extends CComponent
 		}
 		$html = $this->_hl->highlight($code);
 		return strip_tags($html, '<div>,<span>');
+	}
+
+	/**
+	 * Get logs from Yii2DebugLogRoute.
+	 * @return array
+	 * @throws Exception
+	 */
+	protected function getLogs()
+	{
+		if (!$this->_logRoute) {
+			throw new Exception('Yii2DebugLogRoute not initialized.');
+		}
+
+		return $this->_logRoute->getLogs();
+	}
+
+	/**
+	 * Initialize Yii2DebugLogRoute.
+	 * @throws CException
+	 */
+	private function initLogRoute()
+	{
+		$config = array(
+			'class' => 'yii2-debug.Yii2DebugLogRoute',
+			'categories' => $this->_logsCategories,
+			'levels' => $this->_logsLevels,
+		);
+
+		$this->_logRoute = Yii::createComponent($config);
+		$this->_logRoute->init();
+
+		$routeName = 'yii2debug-' . uniqid();
+		Yii::app()->log->setRoutes(array($routeName => $this->_logRoute));
+		$allRoutes = Yii::app()->log->getRoutes();
+		$this->_logRoute = $allRoutes[$routeName];
 	}
 }

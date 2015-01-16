@@ -7,6 +7,16 @@
  */
 class Yii2ProfilingPanel extends Yii2DebugPanel
 {
+	/**
+	 * @inheritdoc
+	 */
+	public function init()
+	{
+		$this->_logsEnabled = true;
+		$this->_logsLevels = CLogger::LEVEL_PROFILE;
+		parent::init();
+	}
+
 	public function getName()
 	{
 		return 'Profiling';
@@ -62,11 +72,10 @@ class Yii2ProfilingPanel extends Yii2DebugPanel
 
 	public function save()
 	{
-		$messages = Yii::getLogger()->getLogs(CLogger::LEVEL_PROFILE);
 		return array(
 			'memory' => memory_get_peak_usage(),
 			'time' => microtime(true) - YII_BEGIN_TIME,
-			'messages' => $messages,
+			'messages' => $this->getLogs(),
 		);
 	}
 }

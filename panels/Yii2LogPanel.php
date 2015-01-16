@@ -9,6 +9,21 @@ class Yii2LogPanel extends Yii2DebugPanel
 {
 	const CATEGORY_DUMP = 'Yii2Debug.dump';
 
+	/**
+	 * @inheritdoc
+	 */
+	public function init()
+	{
+		$this->_logsEnabled = true;
+		$this->_logsLevels = implode(',', array(
+			CLogger::LEVEL_ERROR,
+			CLogger::LEVEL_INFO,
+			CLogger::LEVEL_WARNING,
+			CLogger::LEVEL_TRACE,
+		));
+		parent::init();
+	}
+
 	public function getName()
 	{
 		return 'Logs';
@@ -66,14 +81,8 @@ class Yii2LogPanel extends Yii2DebugPanel
 
 	public function save()
 	{
-		$messages = Yii::getLogger()->getLogs(implode(',', array(
-			CLogger::LEVEL_ERROR,
-			CLogger::LEVEL_INFO,
-			CLogger::LEVEL_WARNING,
-			CLogger::LEVEL_TRACE,
-		)));
 		return array(
-			'messages' => $messages,
+			'messages' => $this->getLogs(),
 		);
 	}
 }
