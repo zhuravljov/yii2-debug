@@ -213,15 +213,6 @@ JS
 	 */
 	protected function processDebug()
 	{
-		$path = $this->logPath;
-		if (!is_dir($path)) mkdir($path);
-
-		$indexFile = "$path/index.data";
-		$manifest = array();
-		if (is_file($indexFile)) {
-			$manifest = unserialize(file_get_contents($indexFile));
-		}
-
 		$data = array();
 		foreach ($this->panels as $panel) {
 			$data[$panel->getId()] = $panel->save();
@@ -240,7 +231,7 @@ JS
 		}
 
 		$request = Yii::app()->getRequest();
-		$manifest[$this->getTag()] = $data['summary'] = array(
+		$data['summary'] = array(
 			'tag' => $this->getTag(),
 			'url' => $request->getHostInfo() . $request->getUrl(),
 			'ajax' => $request->getIsAjaxRequest(),
@@ -249,10 +240,48 @@ JS
 			'ip' => $request->getUserHostAddress(),
 			'time' => time(),
 		);
-		$this->resizeHistory($manifest);
+
+		$path = $this->logPath;
+		if (!is_dir($path)) mkdir($path);
 
 		file_put_contents("$path/{$this->getTag()}.data", serialize($data));
-		file_put_contents($indexFile, serialize($manifest));
+		$this->updateIndexFile("$path/index.data", $data['summary']);
+	}
+
+	/**
+	 * Updates index file with summary log data
+	 *
+	 * @param string $indexFile path to index file
+	 * @param array $summary summary log data
+	 * @throws Exception
+	 */
+	private function updateIndexFile($indexFile, $summary)
+	{
+		touch($indexFile);
+		if (($fp = @fopen($indexFile, 'r+')) === false) {
+			throw new Exception("Unable to open debug data index file: $indexFile");
+		}
+		@flock($fp, LOCK_EX);
+		$manifest = '';
+		while (($buffer = fgets($fp)) !== false) {
+			$manifest .= $buffer;
+		}
+		if (!feof($fp) || empty($manifest)) {
+			// error while reading index data, ignore and create new
+			$manifest = array();
+		} else {
+			$manifest = unserialize($manifest);
+		}
+
+		$manifest[$this->tag] = $summary;
+		$this->resizeHistory($manifest);
+
+		ftruncate($fp, 0);
+		rewind($fp);
+		fwrite($fp, serialize($manifest));
+
+		@flock($fp, LOCK_UN);
+		@fclose($fp);
 	}
 
 	/**
