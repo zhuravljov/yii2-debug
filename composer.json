@@ -1,8 +1,8 @@
 {
-	"name": "zhuravljov/yii2-debug",
+	"name": "orlac/yii2-debug",
 	"description": "Yii debug toolbar",
 	"keywords": ["yii", "extension", "debug"],
-	"homepage": "https://github.com/zhuravljov/yii2-debug",
+	"homepage": "https://github.com/orlac/yii2-debug",
 	"type": "yii-extension",
 	"license": "BSD-3-Clause",
 	"authors": [
