@@ -80,6 +80,12 @@ class Yii2RequestPanel extends Yii2DebugPanel
 		if ($user instanceof CWebUser) {
 			$flashes = $user->getFlashes(false);
 		}
+		
+		$post = empty($_POST) ? array() : $_POST;
+		if (strpos(Yii::app()->request->contentType, 'application/json') !== FALSE)
+		{
+			$post = @json_decode(Yii::app()->request->getRawBody());
+		}
 
 		return array(
 			'flashes' => $flashes,
@@ -91,7 +97,7 @@ class Yii2RequestPanel extends Yii2DebugPanel
 			'actionParams' => $actionParams,
 			'SERVER' => empty($_SERVER) ? array() : $_SERVER,
 			'GET' => empty($_GET) ? array() : $_GET,
-			'POST' => empty($_POST) ? array() : $_POST,
+			'POST' => $post,
 			'COOKIE' => empty($_COOKIE) ? array() : $_COOKIE,
 			'FILES' => empty($_FILES) ? array() : $_FILES,
 			'SESSION' => empty($_SESSION) ? array() : $_SESSION,
