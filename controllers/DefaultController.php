@@ -17,7 +17,7 @@ class DefaultController extends CController
 	 */
 	public function actions()
 	{
-		$actions = [];
+		$actions = array();
 		foreach ($this->owner->panels as $panel) {
 			$actions = array_merge($actions, $panel->actions);
 		}

@@ -28,7 +28,7 @@ class Yii2DebugPanel extends CComponent
 	 * @var array array of actions to add to the debug modules default controller.
 	 * This array will be merged with all other panels actions property.
 	 */
-	public $actions = [];
+	public $actions = array();
 
 	/**
 	 * @var bool Collect log messages by Yii2DebugLogRoute.
