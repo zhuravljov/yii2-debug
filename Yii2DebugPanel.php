@@ -23,6 +23,13 @@ class Yii2DebugPanel extends CComponent
 	 * @var callback функция для обработки данных панели перед сохранением
 	 */
 	public $filterData;
+
+	/**
+	 * @var array array of actions to add to the debug modules default controller.
+	 * This array will be merged with all other panels actions property.
+	 */
+	public $actions = [];
+
 	/**
 	 * @var bool Collect log messages by Yii2DebugLogRoute.
 	 */

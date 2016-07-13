@@ -13,6 +13,18 @@ class DefaultController extends CController
 	public $summary;
 
 	/**
+	 * @inheritdoc
+	 */
+	public function actions()
+	{
+		$actions = [];
+		foreach ($this->owner->panels as $panel) {
+			$actions = array_merge($actions, $panel->actions);
+		}
+		return $actions;
+	}
+
+	/**
 	 * @return Yii2Debug
 	 */
 	public function getOwner()
