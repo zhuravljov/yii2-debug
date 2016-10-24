@@ -79,6 +79,11 @@ class Yii2Debug extends CApplicationComponent
 		parent::init();
 		if (!$this->enabled) return;
 
+		// Do not run on console.
+		if (Yii::app() instanceof CConsoleApplication) {
+			return;
+		}
+		
 		Yii::setPathOfAlias('yii2-debug', dirname(__FILE__));
 		Yii::app()->setImport(array(
 			'yii2-debug.*',
