@@ -141,7 +141,7 @@ class DefaultController extends CController
 	 */
 	public function actionToolbar($tag)
 	{
-		$this->loadData($tag);
+		$this->loadData($tag, 5);
 		$this->renderPartial('toolbar', array(
 			'tag' => $tag,
 			'panels' => $this->getOwner()->panels,
@@ -155,39 +155,56 @@ class DefaultController extends CController
 
 	private $_manifest;
 
-	protected function getManifest()
+	protected function getManifest($forceReload = false)
 	{
-		if ($this->_manifest === null) {
+		if ($this->_manifest === null || $forceReload) {
+			if ($forceReload) {
+				clearstatcache();
+			}
 			$path = $this->getOwner()->logPath;
 			$indexFile = "$path/index.data";
-			if (is_file($indexFile)) {
-				$this->_manifest = array_reverse(unserialize(file_get_contents($indexFile)), true);
+			$content = '';
+			if (($fp = @fopen($indexFile, 'r')) !== false) {
+				@flock($fp, LOCK_SH);
+				$content = fread($fp, filesize($indexFile));
+				@flock($fp, LOCK_UN);
+				fclose($fp);
+			}
+
+			if ($content !== '') {
+				$this->_manifest = array_reverse(unserialize($content), true);
 			} else {
 				$this->_manifest = array();
 			}
 		}
+
 		return $this->_manifest;
 	}
 
-	protected function loadData($tag)
+	protected function loadData($tag, $maxRetry = 0)
 	{
-		$manifest = $this->getManifest();
-		if (isset($manifest[$tag])) {
-			$path = $this->getOwner()->logPath;
-			$dataFile = "$path/$tag.data";
-			$data = unserialize(file_get_contents($dataFile));
-			foreach ($this->getOwner()->panels as $id => $panel) {
-				if (isset($data[$id])) {
-					$panel->load($data[$id], $tag);
-				} else {
-					// remove the panel since it has not received any data
-					unset($this->getOwner()->panels[$id]);
+		for ($retry = 0; $retry <= $maxRetry; ++$retry) {
+			$manifest = $this->getManifest($retry > 0);
+			if (isset($manifest[$tag])) {
+				$path = $this->getOwner()->logPath;
+				$dataFile = "$path/$tag.data";
+				$data = unserialize(file_get_contents($dataFile));
+				foreach ($this->getOwner()->panels as $id => $panel) {
+					if (isset($data[$id])) {
+						$panel->load($data[$id], $tag);
+					} else {
+						// remove the panel since it has not received any data
+						unset($this->getOwner()->panels[$id]);
+					}
 				}
+				$this->summary = $data['summary'];
+
+				return;
 			}
-			$this->summary = $data['summary'];
-		} else {
-			throw new CHttpException(404, "Unable to find debug data tagged with '$tag'.");
+			sleep(1);
 		}
+
+		throw new CHttpException(404, "Unable to find debug data tagged with '$tag'.");
 	}
 
 	public function actionConfig()
