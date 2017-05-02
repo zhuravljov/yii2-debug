@@ -169,7 +169,9 @@ class Yii2Debug extends CApplicationComponent
 	 */
 	protected function initToolbar()
 	{
-		if (!$this->checkAccess()) return;
+		if (!$this->checkAccess() || Yii::app()->getRequest()->getIsAjaxRequest() || preg_match('/application\\/json/', $_SERVER['HTTP_ACCEPT']) ) {
+			return;
+		}
 		$assetsUrl = CHtml::asset(dirname(__FILE__) . '/assets');
 		/* @var CClientScript $cs */
 		$cs = Yii::app()->getClientScript();
