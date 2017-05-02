@@ -230,21 +230,7 @@ JS
 			$panel->load($data[$panel->getId()]);
 		}
 
-		$statusCode = null;
-		if (isset($this->panels['request']) && isset($this->panels['request']->data['statusCode'])) {
-			$statusCode = $this->panels['request']->data['statusCode'];
-		}
-
-		$request = Yii::app()->getRequest();
-		$data['summary'] = array(
-			'tag' => $this->getTag(),
-			'url' => $request->getHostInfo() . $request->getUrl(),
-			'ajax' => $request->getIsAjaxRequest(),
-			'method' => $request->getRequestType(),
-			'code' => $statusCode,
-			'ip' => $request->getUserHostAddress(),
-			'time' => time(),
-		);
+		$data['summary'] = $this->prepareDataSummary();
 
 		$path = $this->logPath;
 		if (!is_dir($path)) mkdir($path);
@@ -422,5 +408,25 @@ JS
 			$result = $data;
 		}
 		return $result;
+	}
+
+	protected function prepareDataSummary()
+	{
+		$statusCode = null;
+		if (isset($this->panels['request']) && isset($this->panels['request']->data['statusCode'])) {
+			$statusCode = $this->panels['request']->data['statusCode'];
+		}
+
+		$request = Yii::app()->getRequest();
+
+		return array(
+			'tag' => $this->getTag(),
+			'url' => $request->getHostInfo() . $request->getUrl(),
+			'ajax' => $request->getIsAjaxRequest(),
+			'method' => $request->getRequestType(),
+			'code' => $statusCode,
+			'ip' => $request->getUserHostAddress(),
+			'time' => time(),
+		);
 	}
 }
