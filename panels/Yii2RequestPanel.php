@@ -67,7 +67,7 @@ class Yii2RequestPanel extends Yii2DebugPanel
 			if (!$actionID) $actionID = $controller->defaultAction;
 			if (($a = $controller->createAction($actionID)) !== null) {
 				if ($a instanceof CInlineAction) {
-					$action = get_class($controller) . '::action' . ucfirst($actionID) . '()';
+					$action = ( isset($controller->module->id)?$controller->module->id . ' @ ' : '' ) . get_class($controller) . '::action' . ucfirst($actionID) . '()';
 				} else {
 					$action = get_class($a) . '::run()';
 				}
