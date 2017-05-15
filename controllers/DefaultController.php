@@ -153,58 +153,27 @@ class DefaultController extends CController
 		phpinfo();
 	}
 
-	private $_manifest;
-
 	protected function getManifest($forceReload = false)
 	{
-		if ($this->_manifest === null || $forceReload) {
-			if ($forceReload) {
-				clearstatcache();
-			}
-			$path = $this->getOwner()->logPath;
-			$indexFile = "$path/index.data";
-			$content = '';
-			if (($fp = @fopen($indexFile, 'r')) !== false) {
-				@flock($fp, LOCK_SH);
-				$content = fread($fp, filesize($indexFile));
-				@flock($fp, LOCK_UN);
-				fclose($fp);
-			}
-
-			if ($content !== '') {
-				$this->_manifest = array_reverse(unserialize($content), true);
-			} else {
-				$this->_manifest = array();
-			}
-		}
-
-		return $this->_manifest;
+		return $this->getOwner()->getStorage()->getManifest($forceReload);
 	}
 
 	protected function loadData($tag, $maxRetry = 0)
 	{
-		for ($retry = 0; $retry <= $maxRetry; ++$retry) {
-			$manifest = $this->getManifest($retry > 0);
-			if (isset($manifest[$tag])) {
-				$path = $this->getOwner()->logPath;
-				$dataFile = "$path/$tag.data";
-				$data = unserialize(file_get_contents($dataFile));
-				foreach ($this->getOwner()->panels as $id => $panel) {
-					if (isset($data[$id])) {
-						$panel->load($data[$id], $tag);
-					} else {
-						// remove the panel since it has not received any data
-						unset($this->getOwner()->panels[$id]);
-					}
-				}
-				$this->summary = $data['summary'];
-
-				return;
-			}
-			sleep(1);
+		$data = $this->getOwner()->getStorage()->loadTag($tag, $maxRetry);
+		if (array() === $data) {
+			throw new CHttpException(404, "Unable to find debug data tagged with '$tag'.");
 		}
 
-		throw new CHttpException(404, "Unable to find debug data tagged with '$tag'.");
+		foreach ($this->owner->panels as $id => $panel) {
+			if (isset($data[$id])) {
+				$panel->load($data[$id], $tag);
+			} else {
+				// remove the panel since it has not received any data
+				unset($this->owner->panels[$id]);
+			}
+		}
+		$this->summary = $data['summary'];
 	}
 
 	public function actionConfig()
