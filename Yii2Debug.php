@@ -67,6 +67,10 @@ class Yii2Debug extends CApplicationComponent
 		'components/db/username',
 		'components/db/password',
 	);
+	/**
+	 * @var Yii2DebugStorage
+	 */
+	protected $storage;
 
 	private $_tag;
 
@@ -232,71 +236,8 @@ JS
 
 		$data['summary'] = $this->prepareDataSummary();
 
-		$path = $this->logPath;
-		if (!is_dir($path)) mkdir($path);
-
-		file_put_contents("$path/{$this->getTag()}.data", serialize($data));
-		$this->updateIndexFile("$path/index.data", $data['summary']);
-	}
-
-	/**
-	 * Updates index file with summary log data
-	 *
-	 * @param string $indexFile path to index file
-	 * @param array $summary summary log data
-	 * @throws Exception
-	 */
-	private function updateIndexFile($indexFile, $summary)
-	{
-		touch($indexFile);
-		if (($fp = @fopen($indexFile, 'r+')) === false) {
-			throw new Exception("Unable to open debug data index file: $indexFile");
-		}
-		@flock($fp, LOCK_EX);
-		$manifest = '';
-		while (($buffer = fgets($fp)) !== false) {
-			$manifest .= $buffer;
-		}
-		if (!feof($fp) || empty($manifest)) {
-			// error while reading index data, ignore and create new
-			$manifest = array();
-		} else {
-			$manifest = unserialize($manifest);
-		}
-
-		$manifest[$this->tag] = $summary;
-		$this->resizeHistory($manifest);
-
-		ftruncate($fp, 0);
-		rewind($fp);
-		fwrite($fp, serialize($manifest));
-
-		@flock($fp, LOCK_UN);
-		@fclose($fp);
-	}
-
-	/**
-	 * Debug files rotation according to {@link ::$historySize}.
-	 * @param $manifest
-	 */
-	protected function resizeHistory(&$manifest)
-	{
-		$tags = array_keys($manifest);
-		$count = 0;
-		foreach ($tags as $tag) {
-			if (!$this->getLock($tag)) $count++;
-		}
-		if ($count > $this->historySize + 10) {
-			$path = $this->logPath;
-			$n = $count - $this->historySize;
-			foreach ($tags as $tag) {
-				if (!$this->getLock($tag)) {
-					@unlink("$path/$tag.data");
-					unset($manifest[$tag]);
-					if (--$n <= 0) break;
-				}
-			}
-		}
+		$this->getStorage()->saveTag($this->getTag(), $data);
+		$this->getStorage()->addToManifest($this->getTag(), $data['summary']);
 	}
 
 	/**
@@ -335,25 +276,12 @@ JS
 	}
 
 	/**
-	 * @var
-	 */
-	private $_locks;
-
-	/**
 	 * @param string $tag
 	 * @return bool
 	 */
 	public function getLock($tag)
 	{
-		if ($this->_locks === null) {
-			$locksFile = $this->logPath . '/locks.data';
-			if (is_file($locksFile)) {
-				$this->_locks = array_flip(unserialize(file_get_contents($locksFile)));
-			} else {
-				$this->_locks = array();
-			}
-		}
-		return isset($this->_locks[$tag]);
+		return $this->getStorage()->getLock($tag);
 	}
 
 	/**
@@ -362,16 +290,7 @@ JS
 	 */
 	public function setLock($tag, $value)
 	{
-		$value = !!$value;
-		if ($this->getLock($tag) !== $value) {
-			if ($value) {
-				$this->_locks[$tag] = true;
-			} else {
-				unset($this->_locks[$tag]);
-			}
-			$locksFile = $this->logPath . '/locks.data';
-			file_put_contents($locksFile, serialize(array_keys($this->_locks)));
-		}
+		$this->getStorage()->setLock($tag, $value);
 	}
 
 	/**
@@ -428,5 +347,23 @@ JS
 			'ip' => $request->getUserHostAddress(),
 			'time' => time(),
 		);
+	}
+
+	public function getStorage()
+	{
+		if (null === $this->storage) {
+			$this->storage = $this->createStorage();
+		}
+		return $this->storage;
+	}
+
+	/**
+	 * Override it in descendant
+	 *
+	 * @return Yii2DebugStorage
+	 */
+	protected function createStorage()
+	{
+		return new Yii2DebugStorage($this);
 	}
 }
