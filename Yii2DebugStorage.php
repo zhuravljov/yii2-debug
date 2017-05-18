@@ -1,6 +1,6 @@
 <?php
 
-class Yii2DebugStorage
+class Yii2DebugStorage implements Yii2DebugStorageInterface
 {
 	/**
 	 * @var Yii2Debug
@@ -84,7 +84,7 @@ class Yii2DebugStorage
 	 * @param array $summary summary log data
 	 * @throws Exception
 	 */
-	public function updateIndexFile($tag, $summary)
+	public function addToManifest($tag, $summary)
 	{
 		$indexFile = $this->getManifestFilePath();
 		touch($indexFile);

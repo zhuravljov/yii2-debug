@@ -237,7 +237,7 @@ JS
 		$data['summary'] = $this->prepareDataSummary();
 
 		$this->getStorage()->saveTag($this->getTag(), $data);
-		$this->getStorage()->updateIndexFile($this->getTag(), $data['summary']);
+		$this->getStorage()->addToManifest($this->getTag(), $data['summary']);
 	}
 
 	/**
