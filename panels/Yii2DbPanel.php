@@ -346,7 +346,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 	 * @param string $driver name
 	 * @return string|null
 	 */
-	public static function getExplainQuery($query, $driver)
+	public function getExplainQuery($query, $driver)
 	{
 		if (preg_match('/^\s*SELECT/', $query)) {
 			switch ($driver) {
@@ -365,9 +365,9 @@ class Yii2DbPanel extends Yii2DebugPanel
 	 * @param CDbConnection $connection
 	 * @return array
 	 */
-	public static function explain($query, $connection)
+	public function explain($query, $connection)
 	{
-		$procedure = self::getExplainQuery($query, $connection->driverName);
+		$procedure = $this->getExplainQuery($query, $connection->driverName);
 		if ($procedure === null) {
 			throw new Exception('Explain not available');
 		}
@@ -389,7 +389,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 	{
 		$connections = array();
 		foreach ($this->data['connections'] as $name => $connection) {
-			if (self::getExplainQuery($query, $connection['driver']) !== null) {
+			if ($this->getExplainQuery($query, $connection['driver']) !== null) {
 				$connections[$name] = $connection;
 			}
 		}

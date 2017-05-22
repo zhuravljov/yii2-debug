@@ -124,13 +124,13 @@ class DefaultController extends CController
 				'panels' => $this->getOwner()->panels,
 				'dbPanel' => $dbPanel,
 				'connection' => $db,
-				'procedure' => Yii2DbPanel::getExplainQuery($query, $db->driverName),
-				'explainRows' => Yii2DbPanel::explain($query, $db),
+				'procedure' => $dbPanel->getExplainQuery($query, $db->driverName),
+				'explainRows' => $dbPanel->explain($query, $db),
 			));
 		} else {
 			$this->renderPartial('_explain', array(
 				'connection' => $db,
-				'explainRows' => Yii2DbPanel::explain($query, $db),
+				'explainRows' => $dbPanel->explain($query, $db),
 			));
 		}
 	}
