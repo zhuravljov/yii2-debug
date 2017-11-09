@@ -83,7 +83,7 @@ class Yii2Debug extends CApplicationComponent
 		if (Yii::app() instanceof CConsoleApplication) {
 			return;
 		}
-		
+
 		Yii::setPathOfAlias('yii2-debug', dirname(__FILE__));
 		Yii::app()->setImport(array(
 			'yii2-debug.*',
@@ -96,8 +96,10 @@ class Yii2Debug extends CApplicationComponent
 
 		$panels = array();
 		foreach (CMap::mergeArray($this->corePanels(), $this->panels) as $id => $config) {
-			if (!isset($config['highlightCode'])) $config['highlightCode'] = $this->highlightCode;
-			$panels[$id] = Yii::createComponent($config, $this, $id);
+			if ($config) {
+				if (!isset($config['highlightCode'])) $config['highlightCode'] = $this->highlightCode;
+				$panels[$id] = Yii::createComponent($config, $this, $id);
+			}
 		}
 		$this->panels = $panels;
 
