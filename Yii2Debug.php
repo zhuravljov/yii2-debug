@@ -27,7 +27,7 @@ class Yii2Debug extends CApplicationComponent
 	 * @var array|Yii2DebugPanel[] list debug panels. The array keys are the panel IDs, and values are the corresponding
 	 * panel class names or configuration arrays. This will be merged with ::corePanels().
 	 * You may reconfigure a core panel via this property by using the same panel ID.
-	 * You may also disable a core panel by setting it to be false in this property.
+	 * You may also disable a core panel by setting the `enabled` property to be false.
 	 */
 	public $panels = array();
 	/**
