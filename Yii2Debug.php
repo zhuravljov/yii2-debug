@@ -96,10 +96,12 @@ class Yii2Debug extends CApplicationComponent
 
 		$panels = array();
 		foreach (CMap::mergeArray($this->corePanels(), $this->panels) as $id => $config) {
-			if ($config) {
-				if (!isset($config['highlightCode'])) $config['highlightCode'] = $this->highlightCode;
-				$panels[$id] = Yii::createComponent($config, $this, $id);
+			if (isset($config['enabled']) && !$config['enabled']) {
+				continue;
 			}
+
+			if (!isset($config['highlightCode'])) $config['highlightCode'] = $this->highlightCode;
+			$panels[$id] = Yii::createComponent($config, $this, $id);
 		}
 		$this->panels = $panels;
 
