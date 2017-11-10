@@ -145,6 +145,22 @@ And attach this panel in config:
 ),
 ```
 
+Disable individual panels
+-------------------------------
+
+To disable an individual panel, either a core or custom panel, set the `enabled` property in the panel config to `false`.
+
+Example: Disable core `profiling` panel
+
+```php
+'panels' => array(
+    'profiling' => array(
+        'enabled' => false,
+        // ...
+    ),
+),
+```
+
 Variables dumping
 ---------------
 
