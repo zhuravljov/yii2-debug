@@ -79,6 +79,9 @@ class Yii2Debug extends CApplicationComponent
 		parent::init();
 		if (!$this->enabled) return;
 
+
+		if (!$this->checkAccess()) return;
+
 		// Do not run on console.
 		if (Yii::app() instanceof CConsoleApplication) {
 			return;
