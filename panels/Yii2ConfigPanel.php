@@ -49,7 +49,7 @@ class Yii2ConfigPanel extends Yii2DebugPanel
 				'version' => PHP_VERSION,
 				'xdebug' => extension_loaded('xdebug'),
 				'apc' => extension_loaded('apc'),
-				'memcache' => extension_loaded('memcache'),
+				'memcache' => extension_loaded('memcache') || extension_loaded('memcached'),
 			),
 		);
 	}
