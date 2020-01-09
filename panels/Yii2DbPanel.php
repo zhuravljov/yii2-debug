@@ -103,7 +103,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 		foreach ($this->data['connections'] as $id => $connection) {
 			if ($connection['driver'] == 'mysql' && isset($connection['info'])) {
 				foreach (explode('  ', $connection['info']) as $line) {
-					list($key, $value) = explode(': ', $line, 2);
+					[$key, $value] = explode(': ', $line, 2);
 					$connection[$key] = $value;
 				}
 				unset($connection['info']);
@@ -128,7 +128,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 		$timings = array();
 		$stack = array();
 		foreach ($messages as $i => $log) {
-			list($token, , $category, $timestamp) = $log;
+			[$token, , $category, $timestamp] = $log;
 			$log[4] = $i;
 			if (strpos($token, 'begin:') === 0) {
 				$log[0] = $token = substr($token, 6);
@@ -196,7 +196,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 		$sqlEnd = strrpos($message , ')');
 		$sql = substr($message, $sqlStart, $sqlEnd - $sqlStart);
 		if (strpos($sql, '. Bound with ') !== false) {
-			list($query, $params) = explode('. Bound with ', $sql);
+			[$query, $params] = explode('. Bound with ', $sql);
 			if (!$insertParams) return $query;
 			$sql = $this->insertParamsToSql($query, $this->parseParamsSql($params));
 		}
@@ -215,12 +215,12 @@ class Yii2DbPanel extends Yii2DebugPanel
 		while (preg_match('/((?:\:[a-z0-9\.\_\-]+)|\d+)\s*\=\s*/i', $params, $m, PREG_OFFSET_CAPTURE, $pos)) {
 			$start = $m[0][1] + strlen($m[0][0]);
 			$key = $m[1][0];
-			if (($params{$start} == '"') || ($params{$start} == "'")) {
-				$quote = $params{$start};
-				$pos = $start;
+			if (($params[$start] === '"') || ($params[$start] == "'")) {
+                $quote = $params[$start];
+                $pos = $start;
 				while (($pos = strpos($params, $quote, $pos + 1)) !== false) {
 					$slashes = 0;
-					while ($params{$pos - $slashes - 1} == '\\') $slashes++;
+					while ($params[$pos - $slashes - 1] == '\\') $slashes++;
 					if ($slashes % 2 == 0) {
 						$binds[$key] = substr($params, $start, $pos - $start + 1);
 						$pos++;
@@ -261,7 +261,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 				do {
 					$sls = 0;
 					if (($qend = strpos($query, $qchar, $qend + 1)) !== false) {
-						while ($query{$qend - $sls - 1} == '\\') $sls++;
+						while ($query[$qend - $sls - 1] == '\\') $sls++;
 					} else {
 						$qend = strlen($query) - 1;
 					}
