@@ -216,8 +216,8 @@ class Yii2DbPanel extends Yii2DebugPanel
 			$start = $m[0][1] + strlen($m[0][0]);
 			$key = $m[1][0];
 			if (($params[$start] === '"') || ($params[$start] == "'")) {
-                $quote = $params[$start];
-                $pos = $start;
+				$quote = $params[$start];
+				$pos = $start;
 				while (($pos = strpos($params, $quote, $pos + 1)) !== false) {
 					$slashes = 0;
 					while ($params[$pos - $slashes - 1] == '\\') $slashes++;
