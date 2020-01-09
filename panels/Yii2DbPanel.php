@@ -103,7 +103,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 		foreach ($this->data['connections'] as $id => $connection) {
 			if ($connection['driver'] == 'mysql' && isset($connection['info'])) {
 				foreach (explode('  ', $connection['info']) as $line) {
-					[$key, $value] = explode(': ', $line, 2);
+					list($key, $value) = explode(': ', $line, 2);
 					$connection[$key] = $value;
 				}
 				unset($connection['info']);
@@ -128,7 +128,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 		$timings = array();
 		$stack = array();
 		foreach ($messages as $i => $log) {
-			[$token, , $category, $timestamp] = $log;
+			list($token, , $category, $timestamp) = $log;
 			$log[4] = $i;
 			if (strpos($token, 'begin:') === 0) {
 				$log[0] = $token = substr($token, 6);
@@ -196,7 +196,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 		$sqlEnd = strrpos($message , ')');
 		$sql = substr($message, $sqlStart, $sqlEnd - $sqlStart);
 		if (strpos($sql, '. Bound with ') !== false) {
-			[$query, $params] = explode('. Bound with ', $sql);
+			list($query, $params) = explode('. Bound with ', $sql);
 			if (!$insertParams) return $query;
 			$sql = $this->insertParamsToSql($query, $this->parseParamsSql($params));
 		}
