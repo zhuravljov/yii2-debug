@@ -215,12 +215,12 @@ class Yii2DbPanel extends Yii2DebugPanel
 		while (preg_match('/((?:\:[a-z0-9\.\_\-]+)|\d+)\s*\=\s*/i', $params, $m, PREG_OFFSET_CAPTURE, $pos)) {
 			$start = $m[0][1] + strlen($m[0][0]);
 			$key = $m[1][0];
-			if (($params{$start} == '"') || ($params{$start} == "'")) {
-				$quote = $params{$start};
+			if (($params[$start] == '"') || ($params[$start] == "'")) {
+				$quote = $params[$start];
 				$pos = $start;
 				while (($pos = strpos($params, $quote, $pos + 1)) !== false) {
 					$slashes = 0;
-					while ($params{$pos - $slashes - 1} == '\\') $slashes++;
+					while ($params[$pos - $slashes - 1] == '\\') $slashes++;
 					if ($slashes % 2 == 0) {
 						$binds[$key] = substr($params, $start, $pos - $start + 1);
 						$pos++;
@@ -261,7 +261,7 @@ class Yii2DbPanel extends Yii2DebugPanel
 				do {
 					$sls = 0;
 					if (($qend = strpos($query, $qchar, $qend + 1)) !== false) {
-						while ($query{$qend - $sls - 1} == '\\') $sls++;
+						while ($query[$qend - $sls - 1] == '\\') $sls++;
 					} else {
 						$qend = strlen($query) - 1;
 					}
