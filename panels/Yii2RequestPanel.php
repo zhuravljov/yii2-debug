@@ -77,7 +77,7 @@ class Yii2RequestPanel extends Yii2DebugPanel
 
 		$flashes = array();
 		$user = Yii::app()->getComponent('user', false);
-		if ($user instanceof CWebUser) {
+		if ($user instanceof CWebUser && isset($_SESSION)) {
 			$flashes = $user->getFlashes(false);
 		}
 
